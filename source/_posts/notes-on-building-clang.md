@@ -1,7 +1,9 @@
 ---
 title: Notes on building Clang
 date: 2019-01-30 20:25:10
-tags: LLVM, Linux
+tags:
+- LLVM
+- Linux
 ---
 
 How I built Clang on Ubuntu 18.04.1 LTS, using GCC.
