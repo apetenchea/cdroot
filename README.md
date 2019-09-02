@@ -1,0 +1,2 @@
+# cdroot
+Hexo blog
