@@ -1,0 +1,19 @@
+00000000004022a0:
+ 4022a0: 48 83 ec 08           sub    rsp,0x8
+ 4022a4: 48 83 f8 03           cmp    rax,0x3
+ 4022a8: 75 0e                 jne    4022b8
+ 4022aa: 48 c7 c0 03 00 00 00  mov    rax,0x3
+ 4022b1: 48 83 c4 08           add    rsp,0x8
+ 4022b5: c3                    ret
+ 4022b6: 66 90                 xchg   ax,ax
+ 4022b8: 48 89 04 24           mov    QWORD PTR [rsp],rax
+ 4022bc: 48 83 c0 fe           add    rax,0xfffffffffffffffe
+ 4022c0: e8 db ff ff ff        call   4022a0
+ 4022c5: 48 89 c3              mov    rbx,rax
+ 4022c8: 48 8b 04 24           mov    rax,QWORD PTR [rsp]
+ 4022cc: 48 01 d8              add    rax,rbx
+ 4022cf: 48 ff c8              dec    rax
+ 4022d2: 48 83 c4 08           add    rsp,0x8
+ 4022d6: c3                    ret
+ 4022d7: 66 0f 1f 84 00 00 00  nop    WORD PTR [rax+rax*1+0x0]
+ 4022de: 00 00

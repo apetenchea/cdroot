@@ -1,0 +1,12 @@
+00000000004022a0:
+ 4022a0: 48 83 fb 03     cmp    rbx,0x3
+ 4022a4: 75 06           jne    4022ac
+ 4022a6: 48 83 c0 02     add    rax,0x2
+ 4022aa: c3              ret
+ 4022ab: 90              nop
+ 4022ac: 48 89 df        mov    rdi,rbx
+ 4022af: 48 83 c7 fe     add    rdi,0xfffffffffffffffe
+ 4022b3: 48 8d 44 18 ff  lea    rax,[rax+rbx*1-0x1]
+ 4022b8: 48 89 fb        mov    rbx,rdi
+ 4022bb: eb e3           jmp    4022a0
+ 4022bd: 0f 1f 00        nop    DWORD PTR [rax]
