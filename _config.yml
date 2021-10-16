@@ -25,7 +25,7 @@ server_ip: 0.0.0.0
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/apetenchea/apetenchea.github.io
+  repo: git@github.com:apetenchea/apetenchea.github.io
   branch: master
 
 # Directory
