@@ -5,7 +5,7 @@
 # Site
 title: cdroot
 subtitle:
-description: Mostly suff I find interesting.
+description: Mostly stuff I find interesting.
 keywords: blog,software,cybersecurity,programming
 author: Alexandru Petenchea
 language: en
@@ -92,7 +92,7 @@ tag_map:
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
 ## http://momentjs.com/docs/#/displaying/format/
-date_format: D MMM YYYY
+date_format: DD MMM YYYY
 time_format: HH:mm:ss
 
 # Pagination
