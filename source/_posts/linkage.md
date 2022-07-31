@@ -7,8 +7,8 @@ tags:
 ---
 
 *kernel32.dll* provides access to a significant part of the [Windows API](https://docs.microsoft.com/en-us/windows/desktop/apiindex/windows-api-list).
-On *Windows 10* (and other versions), the 32 bit library is located in *C:\Windows\System32\*, while the 64 bit one in
-*C:\Windows\SysWOW64\*.
+On *Windows 10* (and other versions), the 32 bit library is located in *C:\Windows\System32*, while the 64 bit one in
+*C:\Windows\SysWOW64*.
 
 ## Linking
 
