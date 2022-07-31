@@ -42,17 +42,27 @@ skip_render:
 new_post_name: :title.md # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
-external_link: true # Open external links in new tab
+external_link:
+  enable: true # Open external links in new tab
+  field: site # Apply to the whole site
+  exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: true
+post_asset_folder: false
 relative_link: false
 future: true
 highlight:
   enable: true
-  line_number: false
+  line_number: true
   auto_detect: false
-  tab_replace:
+  tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  enable: false
+  preprocess: true
+  line_number: true
+  tab_replace: ''
 
 marked:
   gfm: true
@@ -94,6 +104,53 @@ pagination_dir: page
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: cactus
+theme_config:
+  projects_url: http://github.com/apetenchea
+  direction: ltr
+  mathjax:
+    enable: true
+    per_page: true
+    cdn: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/mathjax.js?config=TeX-MML-AM_CHTML
+  math:
+    enable: true
+    per_page: true
+    engine: mathjax
+  nav:
+    home: /
+    about: /about/
+    articles: /archives/
+  social_links:
+    github: http://github.com/apetenchea
+    linkedin: https://www.linkedin.com/in/alexandru-petenchea-155301143
+    mail: mailto:alex.petenchea@gmail.com
+  tags_overview: false
+  posts_overview:
+    show_all_posts: false
+    post_count: 8
+    sort_updated: false
+  archive:
+    sort_updated: false
+  post:
+    show_updated: false
+  logo:
+    enabled: true
+    width: 50
+    height: 50
+    url: /images/terminal.png
+    gravatar: false
+  favicon:
+    desktop:
+      url: /images/favico.png
+      gravatar: false
+    android:
+      url: /images/android-chrome-192x192.png
+      gravatar: false
+    apple:
+      url: /images/apple-touch-icon.png
+      gravatar: false
+  colorscheme: dark
+  page_width: 48
+  rss: false
 
 html_minifier:
   enable: true
