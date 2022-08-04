@@ -1,7 +1,7 @@
 int main(void) {
-	int *x = nullptr;
+  int *x = nullptr;
   while (true) {
     ++*x++;
   }
-	return 0;
+  return 0;
 }
