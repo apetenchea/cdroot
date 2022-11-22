@@ -105,14 +105,14 @@ This means that right at the beginning of `main`, if you look up onto the stack,
 belonging to `BaseThreadInitThunk`, and consequently, belonging to *kernel32.dll*.
 For a quick recap, head [here](https://www.cs.virginia.edu/~evans/cs216/guides/x86.html#calling).
 
-![Debugger illustration](media/BaseThreadInitThunk.png)
+![Debugger illustration](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/linkage/media/BaseThreadInitThunk.png)
 
 Long story short, 0x74958720 is the virtual address of `BaseThreadInitThunk`. The `call esi` instruction at 0x74958742 jumps
 to the entry point, while pushing the address of the next instruction, 0x74958744, onto the stack. By knowing this address,
 it is possible to find the base address of *kernel32.dll*. After finding the base address, one can find the library's export section
 and import any function from there.
 
-![Stack after call](media/stack.png)
+![Stack after call](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/linkage/media/stack.png)
 
 How to get this value from the stack? When the function in generated, the compiler automatically adds the `push esi`
 instruction at the beginning of `main`, so when the next instruction is being executed, the stack pointer moves down 4 bytes.
