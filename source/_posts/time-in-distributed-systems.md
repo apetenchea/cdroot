@@ -16,7 +16,7 @@ system, a physical clock can be used to count seconds, while a logical clocks ca
 
 ## Physical Clocks
 
-![Physical Clock](time-in-distributed-systems/media/physical-clock.png)
+![Physical Clock](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/physical-clock.png)
 
 These can be found in any computer or mobile phone. The most commonly used type of physical clocks are quartz clocks,
 because they're really cheap and provide decent accuracy. The timekeeping component of every quartz clock is a [quartz
