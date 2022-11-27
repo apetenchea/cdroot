@@ -46,6 +46,11 @@ Even if most computers don't come with atomic clocks, they can periodically retr
 has one. Unfortunately, in order to correctly adjust the clock, one has to take network latency and processing time into
 account. This is what the [Network Time Protocol](https://datatracker.ietf.org/doc/html/rfc5905) (NTP) is for.
 
+<video controls>
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/NtpIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
 ## References
 
 * [tldp.org](https://tldp.org/HOWTO/Clock-2.html)
