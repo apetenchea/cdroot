@@ -94,7 +94,7 @@ class NtpIllustration(Scene):
         self.wait()
 
         # Explain
-        delta = MathTex(r"\Delta = (t_4 - t_1) - (t_3 - t2)")
+        delta = MathTex(r"\Delta = (t_4 - t_1) - (t_3 - t_2)")
         delta.next_to(d3_d4_line, UP * 8)
         theta = MathTex(r"\Theta = t_3 + \frac{\Delta}{2} - t_4")
         theta.next_to(delta, DOWN)
