@@ -166,7 +166,7 @@ Once you get the base address of the module, you can parse it as you would do wi
 you can expect the next thing to be a search for the address of `GetProcAddress`, in the library's export section.
 [Here](https://github.com/apetenchea/cdroot/blob/master/source/_posts/linkage/code/peb_linkage.cpp) is the full POC.
 
-## References
+## References and Further Reading
 
 * [ntopcode](https://ntopcode.wordpress.com/2018/02/26/anatomy-of-the-process-environment-block-peb-windows-internals/)
 * [microsoft](https://msdn.microsoft.com/en-us/library/windows/desktop/ms680547(v=vs.85).aspx)

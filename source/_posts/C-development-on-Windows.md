@@ -90,7 +90,7 @@ lldb broken.exe -c broken.exe.2940.dmp
 
 If you're used to GDB, but are new to lldb, check out this [nice command map](https://lldb.llvm.org/use/map.html).
 
-## References
+## References and Further Reading
 
 * [stackoverflow.com](https://stackoverflow.com/questions/53503593/how-to-reduce-visual-studio-build-process-priority-to-prevent-unresponsive-syste)
 * [answers.microsoft.com](https://answers.microsoft.com/en-us/windows/forum/all/how-to-permanently-set-priority-processes-using/2f9ec439-5333-4625-9577-69d322cfbc5e)

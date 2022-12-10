@@ -141,6 +141,6 @@ I know it can feel very frustrating, but don't worry, it is more common than you
 [meditation](https://tergar.org/meditation/) or a self help guide and try to let the auto-formatter do its work.  
 Being proud of your code is a great feeling indeed, but getting things done feels a lot better on the long run.
 
-## References
+## References and Further Reading
 
 * [Oualline, Steve, *Practical C++ Programming, 2nd Edition*](https://www.oreilly.com/library/view/practical-c-programming/0596004192/)
