@@ -122,6 +122,53 @@ auto get_exec_time(auto&& lambda) {
 }
 ```
 
+## Logical Clocks
+
+The order in which two or more events have occurred, on a single machine, can be deduced from a monotonic clock.
+However, this is not applicable to a distributed system, composed of multiple nodes.  
+Imagine you're running a small database cluster, having only one coordinator and a DB-Server.
+The coordinator is the node which the clients talk to. It knows where the data is located and coordinates cluster tasks,
+such as the execution of queries. The DB-Server is the node where the data is actually hosted.
+I borrowed the naming from [ArangoDB](https://www.arangodb.com/), but this is a widely used concept in databases.  
+Consider two queries, we'll call them *Q<sub>1</sub>* and *Q<sub>2</sub>*, sent by the client in the following order:
+
+**Q<sub>1</sub>**
+```sql
+INSERT {name: "foo", value: 1} INTO bar
+```
+**Q<sub>2</sub>**
+```sql
+FOR doc IN bar
+    FILTER doc.name == "foo"
+    UPDATE doc WITH {
+        value: doc.value + 1
+    } IN bar
+```
+
+*Q<sub>1</sub>* inserts a document with name *foo* and value 1 into collection *bar*. Then, *Q<sub>2</sub>* increments
+the value of that document. When the coordinator receives *Q<sub>1</sub>*, it has to send a request to the DB-Server,
+instructing it to insert the document. It then gets *Q<sub>2</sub>* and asks the DB-Server to update the same document,
+based on the current value of the document. However, if the second request sent by the coordinator to the DB-Server
+arrives faster than the first one, there will be no `{name: "foo", value: 1}` in the collection, because it
+has not been inserted yet.
+
+<video controls>
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/CoordinatorIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
+We need to work out a way to fix this ordering issue. One thought is to make it the responsibility of the client
+to synchronize its queries. It would have to wait for the *Q<sub>1</sub>* response to get back, before it can send
+*Q<sub>2</sub>*. However, this is not a solid fix to the problem, as in reality we could be dealing with multiple clients
+and a cluster composed of multiple coordinators and DB-Servers.
+What if two clients contact two different coordinators, trying to modify the same document, such as the coordinators would
+have to contact the same DB-Server. While the queries could reach the two coordinators seconds apart, they might arrive
+at the DB-Server simultaneously. We could configure every node to send a timestamp together with every request,
+therefore relying on each node's physical clock. Then, the DB-Server could compare the timestamps sent by the two coordinators
+and deduce the order in which the requests have been sent. However, given enough time, the clocks on these nodes may
+drift apart, and we could never be sure that they're **perfectly** in sync, even with the clock synchronization performed
+by NTP. The more nodes you add to the system, the more fragile this approach becomes.
+
 ## References and Further Reading
 
 * [tldp.org](https://tldp.org/HOWTO/Clock-2.html)
