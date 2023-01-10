@@ -157,17 +157,66 @@ has not been inserted yet.
 Your browser does not support the video tag.
 </video> 
 
-We need to work out a way to fix this ordering issue. One thought is to make it the responsibility of the client
-to synchronize its queries. It would have to wait for the *Q<sub>1</sub>* response to get back, before it can send
-*Q<sub>2</sub>*. However, this is not a solid fix to the problem, as in reality we could be dealing with multiple clients
-and a cluster composed of multiple coordinators and DB-Servers.
-What if two clients contact two different coordinators, trying to modify the same document, such as the coordinators would
-have to contact the same DB-Server. While the queries could reach the two coordinators seconds apart, they might arrive
-at the DB-Server simultaneously. We could configure every node to send a timestamp together with every request,
-therefore relying on each node's physical clock. Then, the DB-Server could compare the timestamps sent by the two coordinators
-and deduce the order in which the requests have been sent. However, given enough time, the clocks on these nodes may
-drift apart, and we could never be sure that they're **perfectly** in sync, even with the clock synchronization performed
-by NTP. The more nodes you add to the system, the more fragile this approach becomes.
+We need to work out a way to fix this ordering issue. How can we make sure that *Q<sub>1</sub>* gets executed before
+*Q<sub>2</sub>*? One thought is to make it the responsibility of the client to synchronize its queries.
+It would have to wait for the *Q<sub>1</sub>* response to get back, before it can send *Q<sub>2</sub>*. However,
+this moves the problem from the database to the client. Coming from the example above, we thought of the "client" as
+a single node, capable of sending only one query at a time. In reality, that could become a distributed system itself,
+or otherwise put, we might be dealing with multiple clients. So, the synchronization problem still exists, as now all
+these clients have to synchronize the queries within themselves.  
+Getting back to the database cluster, it could be composed of multiple coordinators and DB-Servers, which need to agree
+on the order of queries. What if two clients contact two different coordinators, trying to modify the same document,
+such as both coordinators end up contacting the same DB-Server? While the queries could reach the two coordinators
+seconds apart, once forwarded, they might arrive at the DB-Server simultaneously.
+We could configure all nodes to send a timestamp along with every request. Hence, in our example, the DB-Server
+could compare the timestamps sent by these coordinators and deduce the order in which the requests have been sent.
+The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
+*A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
+Although coordinator *A* is the first to send the request, its clock could be a ahead of *B's*,
+which causes *t<sub>1</sub> > t<sub>2</sub>*, making it appear that *A's* request was sent first.
+Given enough time, all clocks are going to drift apart, and we would never
+be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
+One skewed clock is enough to mess up the entire cluster. Therefore, the more nodes you add to the system,
+the more fragile this approach becomes.
+
+### Causality
+
+[Dr. Martin Kleppmann](https://martin.kleppmann.com/) beautifully defined, in one of his lectures, the concepts presented here.
+*Causality considers whether information could have flowed from one event to another, and thus whether one event may have
+influenced another.* An even is something happening at a node, such as sending or receiving a message.
+Given two events, *A* and *B*, when can we say that *A* causes (or influences) *B*?
+
+* When *A* **happens before** *B*, we can say *A* **might have caused** *B*
+* When *A* and *B* are **concurrent**, we can say that *A* **cannot have caused** *B*
+
+This is probably not what one might've expected from the description of causality. Essentially, it can rule out the
+existence of causality between two events, but it cannot confirm it.
+
+#### Happens-before relation
+
+How can we check, given two events, *A* and *B*, whether *A* happened before *B* (noted *A &rarr; B*)?
+
+Unlike with the relation of causality, there's a few ways to confirm this one for sure.
+* First of all, if the events occurred on the same node, we could use a
+monotonic clock to compare their times of occurrence.
+* Secondly, if *A* is the sending of some message and *B* is the
+receipt of it, then *A* must have occurred before *B*, because a message cannot be received unless it was sent in the first
+place.
+* Lastly, if there's another event *C* such that *A* happens before *C* and *C* happens before *B*, it's obvious that *A*
+happens before *B*. Using the mathematical notation, from *A &rarr; C* and *C &rarr; B*, we can deduce that *A &rarr; B*.
+
+These are the ways in which one could confirm the existence of a happens-before relation between two events
+in a distributed system.
+
+#### Concurrent events
+
+When reasoning about the order of two events, *A* and *B*, we could come up to any of these conclusions:
+
+1. *A* happens before *B*: *A &rarr; B*
+2. *B* happens before *A*: *B &rarr; A*
+3. None of the above, which means that *A* and *B* are concurrent: *A || B*
+
+Looking back at how we defined causality, two concurrent events are independent; they could not have caused each other.
 
 ## References and Further Reading
 
