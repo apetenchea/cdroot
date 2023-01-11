@@ -95,7 +95,7 @@ in the first layer, called primary servers, receive the timestamp from an author
 clock or a GPS signal. All other layers, composed of secondary servers, maintain their clock by communicating with
 multiple servers from the layer above. In the end, clients can reliably obtain the current time from the servers in the last layer.
 
-![NTP Layers](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/ntp.jpg)
+![NTP Layers](Serverhttps://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/ntp.jpg)
 
 ### Monotonic clocks
 
@@ -158,52 +158,56 @@ Your browser does not support the video tag.
 </video> 
 
 We need to work out a way to fix this ordering issue. How can we make sure that *Q<sub>1</sub>* gets executed before
-*Q<sub>2</sub>*? One thought is to make it the responsibility of the client to synchronize its queries.
+*Q<sub>2</sub>*?  
+One thought is to make it the responsibility of the client to synchronize its queries.
 It would have to wait for the *Q<sub>1</sub>* response to get back, before it can send *Q<sub>2</sub>*. However,
 this moves the problem from the database to the client. Coming from the example above, we thought of the "client" as
-a single node, capable of sending only one query at a time. In reality, that could become a distributed system itself,
+a single node, capable of sending only one query at a time. In reality, it could be a distributed system itself,
 or otherwise put, we might be dealing with multiple clients. So, the synchronization problem still exists, as now all
-these clients have to synchronize the queries within themselves.  
-Getting back to the database cluster, it could be composed of multiple coordinators and DB-Servers, which need to agree
+these clients have to synchronize their queries within themselves.  
+Getting back to our database cluster, it could be composed of multiple coordinators and DB-Servers, which have to agree
 on the order of queries. What if two clients contact two different coordinators, trying to modify the same document,
 such as both coordinators end up contacting the same DB-Server? While the queries could reach the two coordinators
 seconds apart, once forwarded, they might arrive at the DB-Server simultaneously.
 We could configure all nodes to send a timestamp along with every request. Hence, in our example, the DB-Server
-could compare the timestamps sent by these coordinators and deduce the order in which the requests have been sent.
+would compare the timestamps attached by the two coordinators and deduce the order in which the requests have been sent.
 The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
 *A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
 Although coordinator *A* is the first to send the request, its clock could be a ahead of *B's*,
-which causes *t<sub>1</sub> > t<sub>2</sub>*, making it appear that *A's* request was sent first.
+which results in *t<sub>1</sub> > t<sub>2</sub>*, thus making it appear that *B's* request was sent first.
 Given enough time, all clocks are going to drift apart, and we would never
 be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
 One skewed clock is enough to mess up the entire cluster. Therefore, the more nodes you add to the system,
-the more fragile this approach becomes.
+the more fragile this approach becomes.  
+To dig in a little more into the pool of potential solutions, we'll have to think about causality and its implications
+in a distributed system.
 
 ### Causality
 
-[Dr. Martin Kleppmann](https://martin.kleppmann.com/) beautifully defined, in one of his lectures, the concepts presented here.
+In one of his lectures, [Dr. Martin Kleppmann](https://martin.kleppmann.com/) beautifully defined the concepts presented here.
 *Causality considers whether information could have flowed from one event to another, and thus whether one event may have
-influenced another.* An even is something happening at a node, such as sending or receiving a message.
+influenced another.* An even is something happening at a node, such as sending or receiving a message.  
 Given two events, *A* and *B*, when can we say that *A* causes (or influences) *B*?
-
 * When *A* **happens before** *B*, we can say *A* **might have caused** *B*
 * When *A* and *B* are **concurrent**, we can say that *A* **cannot have caused** *B*
 
-This is probably not what one might've expected from the description of causality. Essentially, it can rule out the
-existence of causality between two events, but it cannot confirm it.
+This is probably not what one might've expected from the description of causality. Essentially, we can rule out the
+existence of causality between two events, but we cannot confirm it.
 
 #### Happens-before relation
 
-How can we check, given two events, *A* and *B*, whether *A* happened before *B* (noted *A &rarr; B*)?
-
+Given two events, *A* and *B*, how can we check whether *A* happened before *B* (noted *A &rarr; B*)?  
 Unlike with the relation of causality, there's a few ways to confirm this one for sure.
-* First of all, if the events occurred on the same node, we could use a
-monotonic clock to compare their times of occurrence.
-* Secondly, if *A* is the sending of some message and *B* is the
-receipt of it, then *A* must have occurred before *B*, because a message cannot be received unless it was sent in the first
-place.
-* Lastly, if there's another event *C* such that *A* happens before *C* and *C* happens before *B*, it's obvious that *A*
-happens before *B*. Using the mathematical notation, from *A &rarr; C* and *C &rarr; B*, we can deduce that *A &rarr; B*.
+1. If the events occurred on the same node, we could use a monotonic clock to compare their times of occurrence. For example,
+the event of the web browser being started on your machine has clearly occurred before you accessed this website.
+2. If *A* is the sending of some message and *B* is the receipt of it, then *A* must have occurred before *B*,
+because a message cannot be received unless it is sent in the first place. This one is fairly simple. Your web browser
+first sent a request to the server hosting this website, and only then the server was able to receive and process it.
+3. If there's another event *C* such that *A* happens before *C* and *C* happens before *B*, then *A* happens before *B*.
+Using the mathematical notation, from *A &rarr; C* and *C &rarr; B*, we can deduce that *A &rarr; B*. Following along
+on the example above, the web browser is first started - that's event *A*. Then, in order to access this website, a
+request is made to the host, that's *B*. Event *C* occurs when the host receives the request. The event of starting
+the web browser must've happened before the host of this website received the request.
 
 These are the ways in which one could confirm the existence of a happens-before relation between two events
 in a distributed system.
@@ -217,6 +221,18 @@ When reasoning about the order of two events, *A* and *B*, we could come up to a
 3. None of the above, which means that *A* and *B* are concurrent: *A || B*
 
 Looking back at how we defined causality, two concurrent events are independent; they could not have caused each other.
+
+#### Wrapping up
+
+![Causality example](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/causality.jpg)
+
+Suppose that at some point in time you listened to music on your machine, an activity that triggered event *A*. Then, you opened the
+browser (*C*) and accessed a website, implying that the browser sent a request (*D*), which got received by a server (*E*).
+So far, we have the following happens-before relations: *A &rarr; C*, *C &rarr; D*, *A &rarr; D*, *D &rarr; E* and *A &rarr; E*.
+Regarding causality, opening the browser caused a request to be sent, but even though *A &rarr; D*,
+listening to some music certainly did not cause it. Notice that some time ago the server has been restarted (*B*).
+We know this happened before the request was received, *B &rarr; E*, but we can't say that it happened before any of
+the other events on the client. Therefore, *B* is concurrent with all client events: *B || A*, *B || C* and *B || D*.
 
 ## References and Further Reading
 
