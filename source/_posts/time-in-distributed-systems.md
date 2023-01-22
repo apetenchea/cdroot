@@ -6,7 +6,7 @@ tags:
 ---
 
 Operating Systems do a pretty good job at keeping track of time. When on the same machine, all running processes have a
-single source of truth: the system clock (also known as "kernel clock"). This is a software counter based on the timer
+single source of truth: the system clock (also known as the "kernel clock"). This is a software counter based on the timer
 interrupt. On Linux systems, it counts the number of seconds elapsed since Jan 1, 1970 (UTC).
 This can only function while the machine is running, so there's another clock, the real-time clock
 ([RTC](https://en.wikipedia.org/wiki/Real-time_clock)), which keeps track of time while the system is turned off.
@@ -33,32 +33,49 @@ are based on the quantum mechanical properties of the caesium atom. Thus, we are
 [atomic seconds](https://www.britannica.com/technology/atomic-second), which are the accepted time unit by the
 [IS](https://en.wikipedia.org/wiki/International_System_of_Units). Atomic clocks are way more expensive and therefore,
 not as widespread as quartz clocks.     
-From our perspective, a second is roughly the 31.557.600<sup>th</sup> part of a year. We think of a year as the time it takes for our
-planet to complete one revolution around the sun. While our interpretation of a second works nicely in day-to-day
-life, the speed of Earth is not constant. [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)
-(or UTC) is based on atomic time, but includes corrections to account for variations in Earth's rotation. [Such
-adjustments](https://en.wikipedia.org/wiki/Leap_second) to UTC complicate software that needs to work with time and
-dates.
+An atomic second is an universal constant, just like the speed of light. Try to measure it anywhere in the
+universe and you would get the same result. If we were to explain our time-measuring equipment to an
+alien civilisation, they would be able to make sense of what exactly an atomic second means.
+On the other hand, from our perspective here on Earth, a second is the 60<sup>th</sup> part of a minute, the 3600<sup>th</sup> part of an hour,
+the 86400<sup>th</sup> part of a day, and roughly the 31.557.600<sup>th</sup> part of a year.
+We think of a year as the time it takes for our planet to complete one revolution around the sun. This way of dealing with
+time works great in our day-to-day lives. However, for someone (or something) located on another planet,
+such as Mars, the second looses this link with the planet's rotation, becoming only a unit of time, just like the meter is
+a unit of length.
+Problem is, the speed of Earth's rotation is not even constant, which means that a day is not always exactly 86400 atomic seconds.
+A computer running on Mars and a computer running on Earth should be able to report the same timestamp, when prompted to do so. That's when the difference between the atomic time
+and the [solar time](https://en.wikipedia.org/wiki/Solar_time) becomes a problem.
+[Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)
+(or UTC) is based on atomic time, but includes corrections to account for variations in Earth's rotation. Basically,
+we pretend to be following the solar time in increments of 1 atomic second, which eventually diverges from our reality, 
+because the mean solar day is slightly longer than 86400 atomic seconds. Occasionally, the last mine of a day is adjusted to have 61 atomic seconds,
+such that we're synchronizing back with the solar time.
+[Such adjustments](https://en.wikipedia.org/wiki/Leap_second) to UTC complicate software that needs to work with time and dates. 
 
 ### Network Time Protocol
 
-Even if most computers don't come with atomic clocks, they can periodically retrieve the current time from a server that
-has one. Unfortunately, in order to correctly adjust the clock, one has to take network latency and processing time into
-account. This is what the [Network Time Protocol](https://datatracker.ietf.org/doc/html/rfc5905) (NTP) is for.
+Even though most computers don't come with atomic clocks, they can periodically retrieve the current time from a server that
+has one. After all, we need a way to propagate UTC to all computers. This implies some means of communication between machines,
+and therefore, in order to correctly adjust the clock, one has to take network latency and processing time into
+account. Just as [HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview) allows computers to fetch resources, such as HTML documents,
+the [Network Time Protocol](https://datatracker.ietf.org/doc/html/rfc5905) (NTP) allows
+computers to fetch the current time. Of course, it is built on top of other protocols.
 Just like HTTP operates over [TCP](https://www.ietf.org/rfc/rfc793.txt), NTP operates over
-[UDP](https://www.ietf.org/rfc/rfc768.txt). The port on which an NTP server listens for requests is 123.
+[UDP](https://www.ietf.org/rfc/rfc768.txt). The port on which a normal NTP server listens for requests is 123.
+
+#### Inner workings
 
 <video controls>
   <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/NtpIllustration.mp4" type="video/mp4">
 Your browser does not support the video tag.
 </video> 
 
-When the client requests the current time from a server, it passes its own time, *t<sub>1</sub>*, with the request. The server
+When the client requests the current time from a server, it passes its own time, *t<sub>1</sub>*, with that request. The server
 records time *t<sub>2</sub>*, the moment when it receives the request. Now, *t<sub>2</sub>-t<sub>1</sub>* will be used
-to represent the network delay of the client request. After processing the request (i.e. fetching the current time and serializing it),
-the server records *t<sub>3</sub>* and sends the response back to the client, which is going to use *t<sub>3</sub>-t<sub>2</sub>*
-to calculate the processing time. Eventually, when the client receives the response, it sets *t<sub>4</sub>* as the response
-time, and therefore knows that it spent *t<sub>4</sub>-t<sub>3</sub>* time travelling back through the network.  
+to represent the network delay of the client-server request. After processing this request (i.e. fetching the current time and serializing it),
+the server records *t<sub>3</sub>* and sends the response back to the client, which can then deduce the processing time
+from *t<sub>3</sub>-t<sub>2</sub>*. Eventually, when the client receives the response, it sets *t<sub>4</sub>* as the response
+time, and therefore knows that this has spent *t<sub>4</sub>-t<sub>3</sub>* time travelling back through the network.  
 Now, the client doesn't have an immediate answer to the current time in question, but it has these 4 timestamps to work with.
 It has to calculate the difference between its clock and the server's clock, called the *clock skew*, denoted by *Θ* (Greek
 letter Theta). The first step is to estimate the network delay, denoted by *Δ* (Greek letter Delta). This is easy,
@@ -70,12 +87,12 @@ $$
 \end{split}
 $$
 
-Sometimes the request delay can be longer than the response delay, or vice versa. Since we have Δ as the total network
+Sometimes, the request delay can be longer than the response delay, or vice versa. Since we have Δ as the total network
 delay, a fair estimate of the response time would be half of that, *Δ/2*.  
 The last recorded time on the server is *t<sub>3</sub>*, but it takes *Δ/2* for the client to receive that information,
-so the current time, when the client gets *t<sub>3</sub>*, can be estimated as *t<sub>3</sub>+Δ/2*. Then, the client can subtract
-from that its own version of the current time, *t<sub>4</sub>*, and obtain the clock skew, which represents how much the client has to
-adjust its own clock in order to get back in line with the server's clock:
+so the current time, when the client receives *t<sub>3</sub>*, can be estimated as *t<sub>3</sub>+Δ/2*. The client can subtract
+its own version of the current time, *t<sub>4</sub>*, and obtain the clock skew or clock difference, which represents how much the client has to
+adjust its own clock in order to get back in line with the server's clock.
 
 $$
 \begin{split}
@@ -84,30 +101,57 @@ $$
 $$
 
 Unfortunately, network latency and processing time can vary considerably. For that reason, the client sends several requests to
-the server and applies statistical filters to eliminate outliers. In the end, after it has a final estimation of the
-clock skew, the client tries to apply the correction to its own clock. However, if the skew is larger than 1000 seconds,
+the server and applies statistical filters to eliminate outliers. Basically, it takes multiple samples of *Θ* such that in the
+end, after it has a final estimation of the clock skew, it tries to apply the correction to its own clock. However, if the skew is larger than 1000 seconds,
 it may panic and do nothing, waiting for a human operator to resolve the issue.  
+
+#### Layers
 
 How can this protocol be applied at large scale? There are over 2 billion computers in the world, and only a tiny fraction
 of them are equipped with atomic clocks, out of which an even tinier fraction are being used as NTP servers.
-In order to not flood these with requests, there are multiple layers of servers that maintain the current time. The ones
+In order to not flood these few machines with requests, there are multiple layers of servers that maintain the current time. The ones
 in the first layer, called primary servers, receive the timestamp from an authoritative clock source, such as an atomic
 clock or a GPS signal. All other layers, composed of secondary servers, maintain their clock by communicating with
-multiple servers from the layer above. In the end, clients can reliably obtain the current time from the servers in the last layer.
+multiple servers from the layer above, through NTP. In the end, clients can reliably obtain the current time from the servers in the last layer.
 
-![NTP Layers](Serverhttps://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/ntp.jpg)
+![NTP Layers](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/ntp.jpg)
+
+#### In practice
+
+[NTP Pool Project](https://www.ntppool.org/en/) and [Google Public NTP](https://developers.google.com/time) are two examples
+of reliable NTP services. The former is being used by hundreds of millions of systems around the world, and it's the
+default "time-server" for most major Linux distributions.  
+On a Linux machine, the system time and date are controlled through `timedatectl`. Simply typing the command provides the
+current status of the system clock, including whether network time synchronization is active. For a more compact,
+machine-readable output, run `timedatectl show`.
+
+```shell
+Timezone=Europe/Bucharest
+LocalRTC=no
+CanNTP=yes
+NTP=yes
+NTPSynchronized=yes
+TimeUSec=Sat 2023-01-21 00:27:51 EET
+RTCTimeUSec=Sat 2023-01-21 00:27:52 EET
+```
+
+Network time synchronization can be enabled using `timedatectl set-ntp 1`. To set the time and date from a Google NTP server,
+you can run `sudo ntpdate time.google.com`. Feel free to fetch the time programmatically from any of these NTP services
+and play around with it.
+
+{% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/time-in-distributed-systems/code/getntp.py %}
 
 ### Monotonic clocks
 
-Real-time clocks, such as the system time displayed by the `date` command, can be subject to various adjustments, for
-example, due to NTP. When trying to get a good measurement of the time difference between events that happened on the same machine,
-such as the execution time of a function, monotonic clocks are much better suited than real-time clocks. These clocks offer
+Real-time clocks, such as the system time displayed by the `date` command, can be subject to various adjustments, as we've seen,
+due to NTP. When trying to get a good measurement of the time difference between events that happened on the same machine,
+such as capturing the execution time of a function, monotonic clocks are much better suited than real-time clocks. These clocks offer
 higher resolution (possibly nanoseconds) and are not affected by NTP. Their timestamp would not make sense across different
-machines, as it's not relative to a predefined date and can be reset when the computer reboots, but they still keep
-track of the time elapsed, and most importantly, their value is only ever increased.
-Every OS has some way of tracking monotonic time, and programmings languages usually have some abstraction over that.
-In C++, there's [std::chrono::steady_clock](https://en.cppreference.com/w/cpp/chrono/steady_clock) for measuring time
-intervals. The following example illustrates how the execution time of a lambda function can be measured, using a
+machines, as it's not relative to a predefined date and can be reset when the computer reboots, but they keep
+track of the time elapsed, from the perspective of the local machine, and most importantly, their value is only ever-increasing (hence the name monotonic).
+Every OS has some way of tracking monotonic time, and programming languages usually provide some abstraction over that.
+In C++, [std::chrono::steady_clock](https://en.cppreference.com/w/cpp/chrono/steady_clock) can be used for measuring such time
+intervals, at high precision. The following example illustrates how the execution time of an arbitrary lambda function could be measured using a
 monotonic clock.
 
 ```cpp
@@ -148,7 +192,7 @@ FOR doc IN bar
 *Q<sub>1</sub>* inserts a document with name *foo* and value 1 into collection *bar*. Then, *Q<sub>2</sub>* increments
 the value of that document. When the coordinator receives *Q<sub>1</sub>*, it has to send a request to the DB-Server,
 instructing it to insert the document. It then gets *Q<sub>2</sub>* and asks the DB-Server to update the same document,
-based on the current value of the document. However, if the second request sent by the coordinator to the DB-Server
+based on its current value. However, if the second request sent by the coordinator to the DB-Server
 arrives faster than the first one, there will be no `{name: "foo", value: 1}` in the collection, because it
 has not been inserted yet.
 
@@ -158,13 +202,36 @@ Your browser does not support the video tag.
 </video> 
 
 We need to work out a way to fix this ordering issue. How can we make sure that *Q<sub>1</sub>* gets executed before
-*Q<sub>2</sub>*?  
-One thought is to make it the responsibility of the client to synchronize its queries.
+*Q<sub>2</sub>*? One thought is to make it the responsibility of the client to synchronize its queries.
 It would have to wait for the *Q<sub>1</sub>* response to get back, before it can send *Q<sub>2</sub>*. However,
 this moves the problem from the database to the client. Coming from the example above, we thought of the "client" as
 a single node, capable of sending only one query at a time. In reality, it could be a distributed system itself,
 or otherwise put, we might be dealing with multiple clients. So, the synchronization problem still exists, as now all
-these clients have to synchronize their queries within themselves.  
+these clients have to synchronize their queries within themselves. Asking the clients to deal with the ordering of their
+queries is a perfectly valid solution, because this order might depend on some client-side logic. Only the clients
+could tell that *Q<sub>2</sub>* was meant to be executed after *Q<sub>1</sub>*. Normally, the coordinator has no
+way of knowing this, because from its perspective, the queries might arrive in a totally random order.  
+
+![Multiple clients sending requests to one server](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/multiple-clients.jpg)
+
+Due to the nature of network communication, there's no guarantee that when a client sends *Q<sub>1</sub>* before
+*Q<sub>2</sub>*, the coordinator will get them in the desired order. We could configure all nodes to send a timestamp
+along with every request.
+Hence, in our example, the DB-Server
+would compare the timestamps attached by the two coordinators and deduce the order in which the requests have been sent.
+The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
+*A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
+Although coordinator *A* is the first to send the request, its clock could be a ahead of *B's*,
+which results in *t<sub>1</sub> > t<sub>2</sub>*, thus making it appear that *B's* request was sent first.
+Given enough time, all clocks are going to drift apart, and we would never
+be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
+One skewed clock is enough to mess up the entire cluster. Therefore, the more nodes you add to the system,
+the more fragile this approach becomes.  
+To dig in a little more into the pool of potential solutions, we'll have to think about causality and its implications
+in a distributed system.
+
+
+However, the client could use
 Getting back to our database cluster, it could be composed of multiple coordinators and DB-Servers, which have to agree
 on the order of queries. What if two clients contact two different coordinators, trying to modify the same document,
 such as both coordinators end up contacting the same DB-Server? While the queries could reach the two coordinators
