@@ -57,7 +57,7 @@ when prompted to do so. Problem is, due to tidal friction and atmospheric drag, 
 Geologists believe that 300 million years ago there were about 400 days per year. The time for one trip around the sun
 is not thought to have changed; the day has simply become longer. Astronomers measured a large number of days,
 took the average and divided by 86400, obtaining the *mean solar second*, which in the year of its introduction was
-equal to the time it takes the cesium 133 atom to make exactly 9.192.631.770 transitions. This precise number is indeed an
+equal to the time it takes the caesium 133 atom to make exactly 9.192.631.770 transitions. This precise number is indeed an
 universal constant and defines the atomic second. It is used since 1958 to keep track of
 the [International Atomic Time](https://en.wikipedia.org/wiki/International_Atomic_Time).
 But, because the mean solar day is getting longer, the difference between [solar time](https://en.wikipedia.org/wiki/Solar_time)
