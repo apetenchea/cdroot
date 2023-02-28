@@ -37,7 +37,7 @@ When accuracy becomes a problem, people turn to atomic clocks. Atomic clocks are
 properties of the caesium atom. These high-precision clocks are way more expensive and therefore, not as widespread as
 quartz clocks. Using them, we are able to count [atomic seconds](https://www.britannica.com/technology/atomic-second),
 which are the accepted time unit by the [IS](https://en.wikipedia.org/wiki/International_System_of_Units).
-An atomic second is an universal constant, just like the speed of light. Try to measure it anywhere in the
+An atomic second is a universal constant, just like the speed of light. Try to measure it anywhere in the
 universe, and you would get the same result. If we were to explain our time-measuring equipment to an
 alien civilisation, they would be able to make sense of what exactly an atomic second is, and even try to measure it themselves.  
 
@@ -57,7 +57,7 @@ when prompted to do so. Problem is, due to tidal friction and atmospheric drag, 
 Geologists believe that 300 million years ago there were about 400 days per year. The time for one trip around the sun
 is not thought to have changed; the day has simply become longer. Astronomers measured a large number of days,
 took the average and divided by 86400, obtaining the *mean solar second*, which in the year of its introduction was
-equal to the time it takes the caesium 133 atom to make exactly 9.192.631.770 transitions. This precise number is indeed an
+equal to the time it takes the caesium 133 atom to make exactly 9.192.631.770 transitions. This precise number is indeed a
 universal constant and defines the atomic second. It is used since 1958 to keep track of
 the [International Atomic Time](https://en.wikipedia.org/wiki/International_Atomic_Time).
 But, because the mean solar day is getting longer, the difference between [solar time](https://en.wikipedia.org/wiki/Solar_time)
@@ -239,7 +239,7 @@ Hence, in our example, the DB-Server
 would compare the timestamps attached by the two coordinators and deduce the order in which the requests have been sent.
 The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
 *A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
-Although coordinator *A* is the first to send the request, its clock could be a ahead of *B's*,
+Although coordinator *A* is the first to send the request, its clock could be ahead of *B's*,
 which results in *t<sub>1</sub> > t<sub>2</sub>*, thus making it appear that *B's* request was sent first.
 Given enough time, all clocks are going to drift apart, and we would never
 be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
@@ -258,7 +258,7 @@ We could configure all nodes to send a timestamp along with every request. Hence
 would compare the timestamps attached by the two coordinators and deduce the order in which the requests have been sent.
 The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
 *A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
-Although coordinator *A* is the first to send the request, its clock could be a ahead of *B's*,
+Although coordinator *A* is the first to send the request, its clock could be ahead of *B's*,
 which results in *t<sub>1</sub> > t<sub>2</sub>*, thus making it appear that *B's* request was sent first.
 Given enough time, all clocks are going to drift apart, and we would never
 be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
@@ -285,7 +285,7 @@ Given two events, *A* and *B*, how can we check whether *A* happened before *B* 
 Unlike with the relation of causality, there's a few ways to confirm this one for sure.
 1. If the events occurred on the same node, we could use a monotonic clock to compare their times of occurrence. For example,
 the event of the web browser being started on your machine has clearly occurred before you accessed this website.
-2. If *A* is the sending of some message and *B* is the receipt of it, then *A* must have occurred before *B*,
+2. If *A* is the sending of some message and *B* is the receipt of it, then *A* must-have occurred before *B*,
 because a message cannot be received unless it is sent in the first place. This one is fairly simple. Your web browser
 first sent a request to the server hosting this website, and only then the server was able to receive and process it.
 3. If there's another event *C* such that *A* happens before *C* and *C* happens before *B*, then *A* happens before *B*.
