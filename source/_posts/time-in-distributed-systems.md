@@ -11,8 +11,11 @@ interrupt. On Linux systems, it counts the number of seconds elapsed since Jan 1
 This can only function while the machine is running, so there's another clock, the real-time clock
 ([RTC](https://en.wikipedia.org/wiki/Real-time_clock)), which keeps track of time while the system is turned off.
 At boot time, the system clock is initialized from the RTC.  
-Keeping track of time is essential for scheduling events, measuring performance, debugging, etc. In distributed
-systems, physical clocks can be used to count seconds, while logical clocks can be used to count events.
+Keeping track of time is essential for scheduling events, measuring performance, debugging, etc.
+Physical clocks can be used to count seconds, while logical clocks can be used to count events. In a centralized
+system, time is unambiguous. When a process wants to know the time, it simply makes a call to the OS. On the other hand,
+in a distributed system, achieving agreement on time is not trivial. When each machine has its own clock,
+an event that occurred after another event may nevertheless be assigned an earlier time.
 
 ## Physical Clocks
 
@@ -23,34 +26,49 @@ because they're really cheap and provide decent accuracy. The timekeeping compon
 crystal resonator](https://en.wikipedia.org/wiki/Quartz_clock#/media/File:Inside_QuartzCrystal-Tuningfork.jpg),
 in the shape of a musician's tuning fork. Via an electronic circuit, a battery sends electricity to the crystal,
 causing its prongs to vibrate at a certain frequency, generally 32768 Hz, or in other words, 32768 times per second.
-Counting the number of vibration allows us to count the number of seconds elapsed. This is not that relevant for a
-distributed system, but I find it very interesting.     
+Counting the number of vibration allows us to count the number of seconds elapsed. The electronic circuit itself is
+quite simple, composed of a counter and a holding register. Each oscillation of the crystal decrements the counter by one.
+When the counter gets to 0, an interrupt is generated and the counter is reloaded from the holding register. The interrupt
+represents a clock tick. In this way, it is possible to program a timer to generate a clock tick 60 times per second.
+
+![Quartz Crystal Oscillator Circuit](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/quartz-crystal-oscillator-circuit.svg)
+
+When accuracy becomes a problem, people turn to atomic clocks. Atomic clocks are based on the quantum mechanical
+properties of the caesium atom. These high-precision clocks are way more expensive and therefore, not as widespread as
+quartz clocks. Using them, we are able to count [atomic seconds](https://www.britannica.com/technology/atomic-second),
+which are the accepted time unit by the [IS](https://en.wikipedia.org/wiki/International_System_of_Units).
+An atomic second is an universal constant, just like the speed of light. Try to measure it anywhere in the
+universe, and you would get the same result. If we were to explain our time-measuring equipment to an
+alien civilisation, they would be able to make sense of what exactly an atomic second is, and even try to measure it themselves.  
 
 ![Atom](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/atom.png)
 
-When accuracy becomes a problem, people turn to atomic clocks. Without getting into too much detail, atomic clocks
-are based on the quantum mechanical properties of the caesium atom. Thus, we are able to count
-[atomic seconds](https://www.britannica.com/technology/atomic-second), which are the accepted time unit by the
-[IS](https://en.wikipedia.org/wiki/International_System_of_Units). Atomic clocks are way more expensive and therefore,
-not as widespread as quartz clocks.     
-An atomic second is an universal constant, just like the speed of light. Try to measure it anywhere in the
-universe and you would get the same result. If we were to explain our time-measuring equipment to an
-alien civilisation, they would be able to make sense of what exactly an atomic second means.
 On the other hand, from our perspective here on Earth, a second is the 60<sup>th</sup> part of a minute, the 3600<sup>th</sup> part of an hour,
-the 86400<sup>th</sup> part of a day, and roughly the 31.557.600<sup>th</sup> part of a year.
-We think of a year as the time it takes for our planet to complete one revolution around the sun. This way of dealing with
-time works great in our day-to-day lives. However, for someone (or something) located on another planet,
+the 86400<sup>th</sup> part of a day, and roughly the 31.557.600<sup>th</sup> part of a year. Since the invention of
+mechanical clocks in the 17th century, time has been measured astronomically. We think of a year as the time
+it takes for our planet to complete one revolution around the sun. Every day, the sun appears to rise on the eastern
+horizon, then climbs to a maximum height in the sky, and finally sinks in the west. The event of the sun's reaching its
+highest apparent point in the sky is called the transit of the sun. The time interval between two consecutive transits of the sun
+is called the solar day. Therefore, a *solar second* is the 86400<sup>th</sup> part of a solar day. This way of dealing
+with time works great in our day-to-day lives. However, for someone (or something) located on another planet,
 such as Mars, the second looses this link with the planet's rotation, becoming only a unit of time, just like the meter is
-a unit of length.
-Problem is, the speed of Earth's rotation is not even constant, which means that a day is not always exactly 86400 atomic seconds.
-A computer running on Mars and a computer running on Earth should be able to report the same timestamp, when prompted to do so. That's when the difference between the atomic time
-and the [solar time](https://en.wikipedia.org/wiki/Solar_time) becomes a problem.
+a unit of length. A computer running on Mars and a computer running on Earth should be able to report the same timestamp,
+when prompted to do so. Problem is, due to tidal friction and atmospheric drag, the period of Earth's rotation is not constant.
+Geologists believe that 300 million years ago there were about 400 days per year. The time for one trip around the sun
+is not thought to have changed; the day has simply become longer. Astronomers measured a large number of days,
+took the average and divided by 86400, obtaining the *mean solar second*, which in the year of its introduction was
+equal to the time it takes the cesium 133 atom to make exactly 9.192.631.770 transitions. This precise number is indeed an
+universal constant and defines the atomic second. It is used since 1958 to keep track of
+the [International Atomic Time](https://en.wikipedia.org/wiki/International_Atomic_Time).
+But, because the mean solar day is getting longer, the difference between [solar time](https://en.wikipedia.org/wiki/Solar_time)
+and atomic time is always growing. We deal with this by "pretending" to follow the solar time in increments of 1 atomic
+second, occasionally adjusting the last minute of a day to have 61 seconds, so we get back in sync with the solar day.
 [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)
-(or UTC) is based on atomic time, but includes corrections to account for variations in Earth's rotation. Basically,
-we pretend to be following the solar time in increments of 1 atomic second, which eventually diverges from our reality, 
-because the mean solar day is slightly longer than 86400 atomic seconds. Occasionally, the last mine of a day is adjusted to have 61 atomic seconds,
-such that we're synchronizing back with the solar time.
-[Such adjustments](https://en.wikipedia.org/wiki/Leap_second) to UTC complicate software that needs to work with time and dates. 
+(or UTC) is the foundation of all modern civil timekeeping, being based on atomic time, but also including corrections to account for
+variations in Earth's rotation. [Such adjustments](https://en.wikipedia.org/wiki/Leap_second) to UTC complicate software
+that needs to work with time and dates.
+
+![Planets Orbiting](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/orbit.gif)
 
 ### Network Time Protocol
 
@@ -309,3 +327,4 @@ the other events on the client. Therefore, *B* is concurrent with all client eve
 * [Distributed Systems Lectures by Dr Martin Kleppmann](https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/materials.html)
 * [pngwing.com](https://www.pngwing.com)
 * [APNIC](https://labs.apnic.net/index.php/2014/03/10/protocol-basics-the-network-time-protocol/)
+* [news.ucr.edu](https://news.ucr.edu/articles/2020/09/30/venus-might-be-habitable-today-if-not-jupiter)
