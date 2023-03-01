@@ -68,7 +68,8 @@ second, occasionally adjusting the last minute of a day to have 61 seconds, so w
 variations in Earth's rotation. [Such adjustments](https://en.wikipedia.org/wiki/Leap_second) to UTC complicate software
 that needs to work with time and dates.
 
-![Planets Orbiting](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/orbit.gif)
+![Planets Orbiting](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/orbit.gif
+"Animation depicting planet orbits (ChongChong He)")
 
 ### Network Time Protocol
 
@@ -158,6 +159,15 @@ you can run `sudo ntpdate time.google.com`. Feel free to fetch the time programm
 and play around with it.
 
 {% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/time-in-distributed-systems/code/getntp.py %}
+
+### The Berkeley algorithm
+
+Sometimes, the real atomic time does not matter. For example, in a system that's not connected to the internet, this would
+be rather impractical to fetch. For many purposes, it is sufficient that all machines agree on the same time. The
+basic idea of this *internal clock synchronization algorithm* is to configure a time daemon that polls every machine periodically and ask
+what time it is there. Based on the answers, it computes the average time and tells all the other machines to adjust their
+clock accordingly. After the time daemon is initialized, the goal is to have everyone happily agree on a current
+time, being that UTC or not.
 
 ### Monotonic clocks
 
