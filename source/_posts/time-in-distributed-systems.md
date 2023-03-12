@@ -35,7 +35,9 @@ represents a clock tick. In this way, it is possible to program a timer to gener
 
 When accuracy becomes a problem, people turn to atomic clocks. Atomic clocks are based on the quantum mechanical
 properties of the caesium atom. These high-precision clocks are way more expensive and therefore, not as widespread as
-quartz clocks. Using them, we are able to count [atomic seconds](https://www.britannica.com/technology/atomic-second),
+quartz clocks. To give an idea of the difference in precision, the typical quartz clock drifts about 1 second every 100 years,
+while an atomic clock drifts the same amount of time in 100 million years.
+Using such a clock, we are able to count [atomic seconds](https://www.britannica.com/technology/atomic-second),
 which are the accepted time unit by the [IS](https://en.wikipedia.org/wiki/International_System_of_Units).
 An atomic second is a universal constant, just like the speed of light. Try to measure it anywhere in the
 universe, and you would get the same result. If we were to explain our time-measuring equipment to an
@@ -55,14 +57,15 @@ such as Mars, the second looses this link with the planet's rotation, becoming o
 a unit of length. A computer running on Mars and a computer running on Earth should be able to report the same timestamp,
 when prompted to do so. Problem is, due to tidal friction and atmospheric drag, the period of Earth's rotation is not constant.
 Geologists believe that 300 million years ago there were about 400 days per year. The time for one trip around the sun
-is not thought to have changed; the day has simply become longer. Astronomers measured a large number of days,
+is not thought to have changed; the day has simply become longer, while Earth got slower. Astronomers measured a large number of days,
 took the average and divided by 86400, obtaining the *mean solar second*, which in the year of its introduction was
 equal to the time it takes the caesium 133 atom to make exactly 9.192.631.770 transitions. This precise number is indeed a
 universal constant and defines the atomic second. It is used since 1958 to keep track of
 the [International Atomic Time](https://en.wikipedia.org/wiki/International_Atomic_Time).
 But, because the mean solar day is getting longer, the difference between [solar time](https://en.wikipedia.org/wiki/Solar_time)
 and atomic time is always growing. We deal with this by "pretending" to follow the solar time in increments of 1 atomic
-second, occasionally adjusting the last minute of a day to have 61 seconds, so we get back in sync with the solar day.
+second, occasionally adjusting the last minute of a day to have 61 seconds, so we get back in sync with the
+[solar day](https://www.timeanddate.com/time/earth-rotation.html).
 [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time)
 (or UTC) is the foundation of all modern civil timekeeping, being based on atomic time, but also including corrections to account for
 variations in Earth's rotation. [Such adjustments](https://en.wikipedia.org/wiki/Leap_second) to UTC complicate software
@@ -166,7 +169,7 @@ Sometimes, the real atomic time does not matter. For example, in a system that's
 be rather impractical to fetch. For many purposes, it is sufficient that all machines agree on the same time. The
 basic idea of this *internal clock synchronization algorithm* is to configure a time daemon that polls every machine periodically and ask
 what time it is there. Based on the answers, it computes the average time and tells all the other machines to adjust their
-clock accordingly. After the time daemon is initialized, the goal is to have everyone happily agree on a current
+clock accordingly. After the time daemon is initialized, the goal is to get everyone to happily agree on a current
 time, being that UTC or not.
 
 ### Monotonic clocks
@@ -193,6 +196,99 @@ auto get_exec_time(auto&& lambda) {
     return duration_cast<nanoseconds>(end - start).count();
 }
 ```
+
+## Stating the problem
+
+Often enough, in a database system, updates made to one database instance are automatically propagated to other instances, called *replicas*.
+This process is called *replication*, and its purpose is to improve data availability, increase scalability and provide better disaster
+recovery capabilities. For the sake of simplicity, consider a database cluster composed of just two servers, *A* and *B*,
+located in different corners of the world. While both *A* and *B* can be accessed by clients and are able to receive updates at all times,
+they have to be kept in sync, meaning that they should store the exact same copies of the data. In order to improve the overall response
+time of the system, a query is always forwarded to the nearest replica. This optimization does not come without a cost, because now
+each update operation has to be carried out at two replicas.
+
+![Replicas in different corners of the world](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/replicas.jpg)
+
+Assume that both replicas are perfectly in sync and contain the following document:
+```json
+{
+  doc: "foo",
+  value: 42
+}
+```
+At some point, two different clients (we'll identify them as *C<sub>1</sub>* and *C<sub>2</sub>*) try to update the document's value,
+each using a different query, as expressed below in [AQL](https://www.arangodb.com/docs/stable/aql/) syntax:
+
+**C<sub>1</sub>** tries to add 1
+```sql
+FOR doc IN bar
+    FILTER doc.name == "foo"
+    UPDATE doc WITH {
+        value: doc.value + 1
+    } IN bar
+```
+
+**C<sub>2</sub>** tries to multiply by 2 
+```sql
+FOR doc IN bar
+    FILTER doc.name == "foo"
+    UPDATE doc WITH {
+        value: doc.value * 2
+    } IN bar
+```
+
+Each server applies the query it receives and immediately sends the update to all other replicas. In case of *A*, C<sub>1</sub>'s
+update is performed before C<sub>2</sub>'s update. In contrast, the database at *B* will apply C<sub>2</sub>'s update
+before C<sub>1</sub>'s. Consequently, the database at *A* will record `{doc: "foo", value: 86}`, whereas the one at *B* records
+`{doc: "foo", value: 85}`. The problem that we are faced with is that the two update operations should have been performed
+in the same order at each copy. Although it makes a difference whether the addition is applied before the multiplication
+or the other way around, which order is followed is not important from a consistency point of view. The important issue
+is that both copies should be exactly the same.
+
+<video controls>
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/OutOfSyncIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
+### Preconditions
+
+Let me start by discussing the most basic approach (in my opinion), at least in terms of implementation. Instead of passing the
+raw updates between replicas, we could choose to always send the fully updated document instead. This doesn't fix the problem
+immediately, because *A* could end up with 43 and pass that to *B*, while, in contrast, *B* applies *84* and passes it
+to *A*. The replicas would just confuse one another and get out of sync. What we need is more coordination between them.
+Upon receiving an update, a server (we can call it the *sender*) does not apply it immediately.
+Instead, it asks all other servers if they can accept the update, by passing a precondition to them.
+A precondition is a condition that must be true before a particular operation can be executed. In our case,
+the precondition is that the current value of the document is 42. If this check succeeds, it means that both the sender and the replica
+have the same copy of the document. Only after all replicas checked true for the precondition, the sender can apply the
+update itself and instruct the others to do the same. However, if the precondition fails for any of the replicas, the sender
+has to abort the query and return an error to the client.
+
+<video controls>
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/PreconditionTrueIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
+What happens when *A* and *B* both receive different queries and each sends a precondition at the same time? This situation
+can give rise to a write-write conflict. While trying to update the same key, both send the same precondition to
+each other, which succeeds, since both still hold the initial value of the document.
+Upon receiving confirmation, they apply the update locally and send the new version of the value to each other.
+We need to make sure that a server never replies *true* on a precondition referring to a key which it is trying to change itself.
+This acts as a global lock on the key, rejecting any attempts to update it concurrently.
+
+![Write-Write Conflict](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/PreconditionFalseIllustration.png)
+
+Note that this approach does not scale well. Having a global lock can become frustrating for clients, as their usual
+approach is to retry the query in case of failure. The more replicas the system has, the longer it will take to synchronize
+them, which only causes the lock to be held for longer periods of time.
+The more clients there are, as they try to modify the same key, the easier it is for them to block each other with every retry.  
+Previously, we stated that a server needs confirmation from all other replicas, before executing a query. If one of them
+fails, the entire cluster gets blocked in read-only mode until the situation gets fixed.
+
+### Timestamps
+
+Is it possible to pass timestamps along with the update operations, such that all replicas are able to order them in
+the same way?
 
 ## Logical Clocks
 
