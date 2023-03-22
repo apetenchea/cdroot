@@ -252,7 +252,7 @@ Your browser does not support the video tag.
 
 ### Preconditions
 
-Let me start by discussing the most basic approach (in my opinion), at least in terms of implementation. Instead of passing the
+Let me start by discussing the most basic approach (in my opinion), at least in terms of implementation. Instead of passing
 raw updates between replicas, we could choose to always send the fully updated document instead. This doesn't fix the problem
 immediately, because *A* could end up with 43 and pass that to *B*, while, in contrast, *B* applies *84* and passes it
 to *A*. The replicas would just confuse one another and get out of sync. What we need is more coordination between them.
@@ -273,7 +273,7 @@ What happens when *A* and *B* both receive different queries and each sends a pr
 can give rise to a write-write conflict. While trying to update the same key, both send the same precondition to
 each other, which succeeds, since both still hold the initial value of the document.
 Upon receiving confirmation, they apply the update locally and send the new version of the value to each other.
-We need to make sure that a server never replies *true* on a precondition referring to a key which it is trying to change itself.
+We need to make sure a server never replies *true* on a precondition referring to a key that it is trying to change itself.
 This acts as a global lock on the key, rejecting any attempts to update it concurrently.
 
 ![Write-Write Conflict](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/PreconditionFalseIllustration.png)
@@ -283,12 +283,76 @@ approach is to retry the query in case of failure. The more replicas the system 
 them, which only causes the lock to be held for longer periods of time.
 The more clients there are, as they try to modify the same key, the easier it is for them to block each other with every retry.  
 Previously, we stated that a server needs confirmation from all other replicas, before executing a query. If one of them
-fails, the entire cluster gets blocked in read-only mode until the situation gets fixed.
+fails, the entire cluster gets blocked in read-only mode until the situation gets fixed. This is a huge disadvantage.  
+Nevertheless, in practice, preconditions are quite useful when a client wants to make sure the update it sends will
+have the desired effect. In other words, assuming the database cluster takes care of replication, the client might
+want to update a document, but only if that document had not changed in the meantime. This way, the client sends its
+current value or hash of the document together with the new value, and the cluster applies the update only if its document
+matches the one sent by the client. This is similar to a [compare_exchange](https://en.cppreference.com/w/cpp/atomic/atomic/compare_exchange)
+operation in C++.
 
 ### Timestamps
 
-Is it possible to pass timestamps along with the update operations, such that all replicas are able to order them in
-the same way?
+Going back to the core problem, what we really want is that all updates are performed by all replicas in the same order.
+Is it possible to achieve this by passing physical timestamps along with the update operations? In this approach, each
+message is always timestamped with the current time of its sender, obtained from a physical clock.
+Let's simplify the discussion, by assuming that no messages are lost and that messages from the same sender are received
+in the same order they were sent. This is a big assumption, but it allows us to truly focus on the ordering problem.  
+When a node receives a message, it is put into a local queue, ordered according to its timestamp. The receiver multicasts
+an acknowledgment to the other nodes. A node can deliver a queued message to the application it is running only when
+that message is at the head of the queue and has been acknowledged by each other node.  
+Consider the same scenario as in the example above, involving two nodes, *A* and *B*. *A* sends message *m<sub>1</sub>*, which according
+to *A's* clock, occurs at *t<sub>1</sub>*. On the other side, *B* prepares to send message *m<sub>2</sub>*, timestamped with
+*t<sub>2</sub>*. Assuming *t<sub>1</sub> < t<sub>2</sub>*, after *A* and *B* receive each other's messages,
+their queues will contain *[m<sub>1</sub>, m<sub>2</sub>]* exactly in this order.
+Regardless of the order in which acknowledgments arrive, *m<sub>1</sub>* is going to be passed to the underlying application before *m<sub>2</sub>*,
+on both nodes. This ensures all nodes agree on a single, coherent view of the shared data, providing consistency.
+However, this approach has a major drawback: it is based on the assumption that all nodes have their physical clocks synchronized.
+What if *A's* clock is 1 minute ahead of *B's*? For every message sent by *A*, *B* has 60 seconds to send as many messages as it wants,
+during which its messages will take priority over *A's*, since *B's* timestamps are always lower. Apart from the fact that physical clocks may be subject to sudden change,
+clock drift (which is impossible to avoid on the long run), can cause scalability issues.
+The following animation illustrates how this kind of unfairness between the two example nodes, *A* and *B*, can occur. Even though *A* is the first
+to send its message, *B's* messages are queued first.
+
+<video controls>
+  <source src="http://localhost:4000/UsingTimestampsIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
+The values of the timestamps do not matter in relation to UTC, it's just that the clocks have to be synchronized. This is
+where the Berkeley algorithm could be put to good use. The downside of that is, the time daemon may become a single point
+of failure in the system.
+
+#### Google TrueTime
+
+Turns out, given enough resources, it is actually possible to use physical timestamps in practice. Although infinite
+precision is asking too much, we can come pretty close. [TrueTime](https://cloud.google.com/spanner/docs/true-time-external-consistency)
+is Google's solution to providing globally consistent timestamps, designed for their [Spanner](https://research.google/pubs/pub39966/)
+database. Back in 2006, when Google was using MySQL at massive scale, the process of re-sharding a cluster took them about two years.
+That's how Spanner was born, designed to fit Google's needs for scalability.
+TrueTime represents each timestamp as an interval *[T<sub>earliest</sub>, T<sub>latest</sub>]*. The service
+essentially provides three operations:
+
+| Operation    | Result                                                     |
+|--------------|------------------------------------------------------------|
+| TT.now()     | time interval *[T<sub>earliest</sub>, T<sub>latest</sub>]* |
+| TT.after(t)  | true if timestamp t has definitely passed                  |
+| TT.before(t) | true if timestamp t has definitely not arrived             |
+
+The most important aspect is that *T<sub>earliest</sub>* and *T<sub>latest</sub>* are guaranteed bounds. However, if
+the difference between them would be 60 seconds, we could end up with the same scalability issues as above. Remarkably, the
+engineers at Google have reduced it to just 6ms. To achieve that, several time-master machines, equipped with accurate GPS
+receivers or atomic clocks, are installed in each data center. All running nodes regularly poll a variety of masters and
+apply statistical filters to reject outliers and promote the best candidate time. Meanwhile, the performance of the system
+is continuously monitored and "bad" machines are removed. In this way, Spanner synchronizes and maintains the same time
+across all nodes globally spread across multiple data centers.  
+There's lots of cool things to discuss about Google Spanner. It was the first system to distribute data at global scale and
+support externally-consistent distributed transactions. In simpler terms, it ensures that transactions occurring
+on different systems appear as if they were executed in a single, global order to external observers.
+Achieving externally consistent distributed transactions is no easy feat, as it typically involves coordination protocols,
+such as [two-phase commit (2PC)](https://en.wikipedia.org/wiki/Two-phase_commit_protocol), and timestamp ordering mechanisms.
+To learn more about the inner workings of Google Spanner, check out the original
+[paper](https://static.googleusercontent.com/media/research.google.com/en//archive/spanner-osdi2012.pdf).
 
 ## Logical Clocks
 
@@ -427,6 +491,7 @@ the other events on the client. Therefore, *B* is concurrent with all client eve
 
 ## References and Further Reading
 
+* [M. van Steen and A.S. Tanenbaum, Distributed Systems, 3rd ed., distributed-systems.net, 2017.](https://www.distributed-systems.net/index.php/books/ds3/)
 * [tldp.org](https://tldp.org/HOWTO/Clock-2.html)
 * [chelseaclock.com](https://www.chelseaclock.com/blog/how-do-quartz-clocks-work)
 * [wikipedia.org/wiki/Quartz_clock](https://en.wikipedia.org/wiki/Quartz_clock)
@@ -434,3 +499,5 @@ the other events on the client. Therefore, *B* is concurrent with all client eve
 * [pngwing.com](https://www.pngwing.com)
 * [APNIC](https://labs.apnic.net/index.php/2014/03/10/protocol-basics-the-network-time-protocol/)
 * [news.ucr.edu](https://news.ucr.edu/articles/2020/09/30/venus-might-be-habitable-today-if-not-jupiter)
+* [Kevin Sookocheff](https://sookocheff.com/post/time/truetime/)
+* [Internals of Google Cloud Spanner](https://blog.searce.com/internals-of-google-cloud-spanner-5927e4b83b36)

@@ -131,3 +131,85 @@ class PreconditionFalseIllustration(Scene):
         a_false = Text("false", color=RED).next_to(a, RIGHT)
         b_false = Text("false", color=RED).next_to(b, LEFT)
         self.add(a, a_lbl, a_val, b, b_lbl, b_val, a_arrow, a_arrow_tex, b_arrow, b_arrow_tex, a_false, b_false)
+
+
+class UsingTimestampsIllustration(Scene):
+    def construct(self):
+        radius = 1
+        horizontal = 4
+        tex_scale = 1
+
+        a = Circle(color=RED, radius=radius)
+        a.shift(horizontal * LEFT)
+        a_lbl = Text("A", color=GREEN).scale(tex_scale).next_to(a, UP)
+        a_val = MathTex("\emptyset", color=WHITE).scale(tex_scale).move_to(a.get_center())
+
+        b = Circle(color=RED, radius=radius)
+        b.shift(horizontal * RIGHT)
+        b_lbl = Text("B", color=GREEN).scale(tex_scale).next_to(b, UP)
+        b_val = MathTex("\emptyset", color=WHITE).scale(tex_scale).move_to(b.get_center())
+
+        self.add(a, a_lbl, a_val, b, b_lbl, b_val)
+        self.wait()
+
+        a_t80 = Arrow(a.get_right(), b.get_left(), color=GREEN)
+        a_update = MathTex("t_{80}", color=WHITE).scale(tex_scale).move_to(a.get_center())
+        self.play(Transform(a_val, a_update), GrowArrow(a_t80))
+        self.wait()
+        b_update = MathTex("t_{80}", color=WHITE).scale(tex_scale).move_to(b.get_center())
+        self.play(Transform(b_val, b_update), FadeOut(a_t80))
+        self.wait()
+
+        b_t24 = Arrow(b.get_left(), a.get_right(), color=GREEN)
+        b_update = MathTex("t_{24}, t_{80}", color=WHITE).scale(tex_scale).move_to(b.get_center())
+        a_update = MathTex("t_{24}, t_{80}", color=WHITE).scale(tex_scale).move_to(a.get_center())
+        self.play(Transform(b_val, b_update), GrowArrow(b_t24))
+        self.wait()
+        self.play(FadeOut(b_t24), FadeOut(b_t24), Transform(a_val, a_update))
+        self.wait()
+
+        b_t80_ack = Arrow(b.get_left(), a.get_right(), color=BLUE)
+        b_t80_ack_text = MathTex("ack(t_{80})", color=WHITE).scale(tex_scale).next_to(b_t80_ack, UP)
+        self.play(GrowArrow(b_t80_ack), FadeIn(b_t80_ack_text))
+        self.wait()
+        self.play(FadeOut(b_t80_ack), FadeOut(b_t80_ack_text))
+        self.wait()
+
+        tex_scale = 0.8
+        b_t37 = Arrow(b.get_left(), a.get_right(), color=GREEN)
+        b_update = MathTex("t_{24}, t_{37}, t_{80}", color=WHITE).scale(tex_scale).move_to(b.get_center())
+        a_update = MathTex("t_{24}, t_{37}, t_{80}", color=WHITE).scale(tex_scale).move_to(a.get_center())
+        self.play(Transform(b_val, b_update), GrowArrow(b_t37))
+        self.wait()
+        self.play(FadeOut(b_t37), FadeOut(b_t37), Transform(a_val, a_update))
+        self.wait()
+
+        a_t37_ack = Arrow(a.get_right(), b.get_left(), color=BLUE)
+        a_t37_ack_text = MathTex("ack(t_{37})", color=WHITE).scale(tex_scale).next_to(a_t37_ack, UP)
+        self.play(GrowArrow(a_t37_ack), FadeIn(a_t37_ack_text))
+        self.wait()
+        self.play(FadeOut(a_t37_ack), FadeOut(a_t37_ack_text))
+        self.wait()
+
+        a_t24_ack = Arrow(a.get_right(), b.get_left(), color=BLUE)
+        a_t24_ack_text = MathTex("ack(t_{24})", color=WHITE).scale(tex_scale).next_to(a_t24_ack, UP)
+        self.play(GrowArrow(a_t24_ack), FadeIn(a_t24_ack_text))
+        self.wait()
+        self.play(FadeOut(a_t24_ack), FadeOut(a_t24_ack_text))
+        self.wait()
+
+        tex_scale = 1
+        b_update = MathTex("t_{37}, t_{80}", color=WHITE).scale(tex_scale).move_to(b.get_center())
+        a_update = MathTex("t_{37}, t_{80}", color=WHITE).scale(tex_scale).move_to(a.get_center())
+        self.play(Transform(b_val, b_update), Transform(a_val, a_update))
+        self.wait()
+
+        b_update = MathTex("t_{80}", color=WHITE).scale(tex_scale).move_to(b.get_center())
+        a_update = MathTex("t_{80}", color=WHITE).scale(tex_scale).move_to(a.get_center())
+        self.play(Transform(b_val, b_update), Transform(a_val, a_update))
+        self.wait()
+
+        b_update = MathTex("\emptyset", color=WHITE).scale(tex_scale).move_to(b.get_center())
+        a_update = MathTex("\emptyset", color=WHITE).scale(tex_scale).move_to(a.get_center())
+        self.play(Transform(b_val, b_update), Transform(a_val, a_update))
+        self.wait()
