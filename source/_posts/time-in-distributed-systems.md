@@ -315,7 +315,7 @@ The following animation illustrates how this kind of unfairness between the two 
 to send its message, *B's* messages are queued first.
 
 <video controls>
-  <source src="http://localhost:4000/UsingTimestampsIllustration.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/UsingTimestampsIllustration.mp4" type="video/mp4">
 Your browser does not support the video tag.
 </video> 
 
@@ -356,120 +356,56 @@ To learn more about the inner workings of Google Spanner, check out the original
 
 ## Logical Clocks
 
-The order in which two or more events have occurred, on a single machine, can be deduced from a monotonic clock.
-However, this is not applicable to a distributed system, composed of multiple nodes.  
-Imagine you're running a small database cluster, having only one coordinator and a DB-Server.
-The coordinator is the node which the clients talk to. It knows where the data is located and coordinates cluster tasks,
-such as the execution of queries. The DB-Server is the node where the data is actually hosted.
-I borrowed the naming from [ArangoDB](https://www.arangodb.com/), but this is a widely used concept in databases.  
-Consider two queries, we'll call them *Q<sub>1</sub>* and *Q<sub>2</sub>*, sent by the client in the following order:
+Not everyone has the resources to build a system like TrueTime. Luckily, there are simpler ways to reason about the ordering
+of events in a cluster. [Leslie Lamport](https://lamport.org/) pointed out that nodes don't have to agree on what time it is,
+but rather on the order in which events occur, and these are two different problems. Previously, when we discussed
+the naive approach of using physical timestamps, we actually came pretty close to logical clocks. It's only that, for
+the physical ones, we use an external device to increment it, while logical clocks are incremented with the occurrence of
+every event. An event is something happening at one node: sending or receiving a message, or a local execution step.
 
-**Q<sub>1</sub>**
-```sql
-INSERT {name: "foo", value: 1} INTO bar
-```
-**Q<sub>2</sub>**
-```sql
-FOR doc IN bar
-    FILTER doc.name == "foo"
-    UPDATE doc WITH {
-        value: doc.value + 1
-    } IN bar
-```
+### Ordering events
 
-*Q<sub>1</sub>* inserts a document with name *foo* and value 1 into collection *bar*. Then, *Q<sub>2</sub>* increments
-the value of that document. When the coordinator receives *Q<sub>1</sub>*, it has to send a request to the DB-Server,
-instructing it to insert the document. It then gets *Q<sub>2</sub>* and asks the DB-Server to update the same document,
-based on its current value. However, if the second request sent by the coordinator to the DB-Server
-arrives faster than the first one, there will be no `{name: "foo", value: 1}` in the collection, because it
-has not been inserted yet.
+Before we can discuss how logical clocks work, we need to understand the criteria on which events may be ordered. We
+won't be relying on physical clocks, but rather on the relation between different events. What does it mean for an event
+*A* to happen before another event *B*? Are we able to tell that an event was caused by another?
 
-<video controls>
-  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/CoordinatorIllustration.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video> 
-
-We need to work out a way to fix this ordering issue. How can we make sure that *Q<sub>1</sub>* gets executed before
-*Q<sub>2</sub>*? One thought is to make it the responsibility of the client to synchronize its queries.
-It would have to wait for the *Q<sub>1</sub>* response to get back, before it can send *Q<sub>2</sub>*. However,
-this moves the problem from the database to the client. Coming from the example above, we thought of the "client" as
-a single node, capable of sending only one query at a time. In reality, it could be a distributed system itself,
-or otherwise put, we might be dealing with multiple clients. So, the synchronization problem still exists, as now all
-these clients have to synchronize their queries within themselves. Asking the clients to deal with the ordering of their
-queries is a perfectly valid solution, because this order might depend on some client-side logic. Only the clients
-could tell that *Q<sub>2</sub>* was meant to be executed after *Q<sub>1</sub>*. Normally, the coordinator has no
-way of knowing this, because from its perspective, the queries might arrive in a totally random order.  
-
-![Multiple clients sending requests to one server](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/multiple-clients.jpg)
-
-Due to the nature of network communication, there's no guarantee that when a client sends *Q<sub>1</sub>* before
-*Q<sub>2</sub>*, the coordinator will get them in the desired order. We could configure all nodes to send a timestamp
-along with every request.
-Hence, in our example, the DB-Server
-would compare the timestamps attached by the two coordinators and deduce the order in which the requests have been sent.
-The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
-*A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
-Although coordinator *A* is the first to send the request, its clock could be ahead of *B's*,
-which results in *t<sub>1</sub> > t<sub>2</sub>*, thus making it appear that *B's* request was sent first.
-Given enough time, all clocks are going to drift apart, and we would never
-be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
-One skewed clock is enough to mess up the entire cluster. Therefore, the more nodes you add to the system,
-the more fragile this approach becomes.  
-To dig in a little more into the pool of potential solutions, we'll have to think about causality and its implications
-in a distributed system.
-
-
-However, the client could use
-Getting back to our database cluster, it could be composed of multiple coordinators and DB-Servers, which have to agree
-on the order of queries. What if two clients contact two different coordinators, trying to modify the same document,
-such as both coordinators end up contacting the same DB-Server? While the queries could reach the two coordinators
-seconds apart, once forwarded, they might arrive at the DB-Server simultaneously.
-We could configure all nodes to send a timestamp along with every request. Hence, in our example, the DB-Server
-would compare the timestamps attached by the two coordinators and deduce the order in which the requests have been sent.
-The weakness of this approach is that it heavily relies on each node's physical clock. Let's consider that coordinator
-*A* sends timestamp *t<sub>1</sub>*, while coordinator *B* sends timestamp *t<sub>2</sub>*.
-Although coordinator *A* is the first to send the request, its clock could be ahead of *B's*,
-which results in *t<sub>1</sub> > t<sub>2</sub>*, thus making it appear that *B's* request was sent first.
-Given enough time, all clocks are going to drift apart, and we would never
-be sure that they're **perfectly** in sync, even with the clock synchronization performed by NTP.
-One skewed clock is enough to mess up the entire cluster. Therefore, the more nodes you add to the system,
-the more fragile this approach becomes.  
-To dig in a little more into the pool of potential solutions, we'll have to think about causality and its implications
-in a distributed system.
-
-### Causality
+#### Causality
 
 In one of his lectures, [Dr. Martin Kleppmann](https://martin.kleppmann.com/) beautifully defined the concepts presented here.
 *Causality considers whether information could have flowed from one event to another, and thus whether one event may have
-influenced another.* An even is something happening at a node, such as sending or receiving a message.  
-Given two events, *A* and *B*, when can we say that *A* causes (or influences) *B*?
+influenced another.* Given two events, *A* and *B*, when can we say that *A* causes (or influences) *B*?
 * When *A* **happens before** *B*, we can say *A* **might have caused** *B*
 * When *A* and *B* are **concurrent**, we can say that *A* **cannot have caused** *B*
 
-This is probably not what one might've expected from the description of causality. Essentially, we can rule out the
-existence of causality between two events, but we cannot confirm it.
+Although this is probably not what one would expect from the description of causality, essentially, it allows us to rule out the
+existence of causality between two events. However, we cannot confirm it.
 
 #### Happens-before relation
 
-Given two events, *A* and *B*, how can we check whether *A* happened before *B* (noted *A &rarr; B*)?  
-Unlike with the relation of causality, there's a few ways to confirm this one for sure.
+In his [Time, Clocks, and the Ordering of Events in a Distributed System](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) paper,
+Lamport introduced the *happens-before* relation, which essentially defines partial ordering of events in a distributed
+system. He made some fundamental observations on top of which Lamport Clocks can be built.  
+Given two events, *A* and *B*, can we check that *A* happened before *B* (noted *A &rarr; B*)? *A happens before B*
+means that all nodes agree that first event *A* occurs, then afterward, even *B* occurs. Unlike with the relation of causality,
+there's a few ways to confirm this one for sure.
+
 1. If the events occurred on the same node, we could use a monotonic clock to compare their times of occurrence. For example,
-the event of the web browser being started on your machine has clearly occurred before you accessed this website.
+the event of the web browser being started on your machine has clearly occurred before you have accessed this website.
 2. If *A* is the sending of some message and *B* is the receipt of it, then *A* must-have occurred before *B*,
 because a message cannot be received unless it is sent in the first place. This one is fairly simple. Your web browser
-first sent a request to the server hosting this website, and only then the server was able to receive and process it.
+first sends a request to the server hosting this website, and only then the server is able to receive and process it.
 3. If there's another event *C* such that *A* happens before *C* and *C* happens before *B*, then *A* happens before *B*.
-Using the mathematical notation, from *A &rarr; C* and *C &rarr; B*, we can deduce that *A &rarr; B*. Following along
+Using the mathematical notation, from *A &rarr; C* and *C &rarr; B*, we can infer that *A &rarr; B*. Following along
 on the example above, the web browser is first started - that's event *A*. Then, in order to access this website, a
 request is made to the host, that's *B*. Event *C* occurs when the host receives the request. The event of starting
 the web browser must've happened before the host of this website received the request.
 
-These are the ways in which one could confirm the existence of a happens-before relation between two events
-in a distributed system.
+Note that this is a [partial order](https://mathworld.wolfram.com/PartialOrder.html) relation. Not all elements in a
+partially ordered set need to be directly comparable, which distinguishes it from total order.
 
 #### Concurrent events
 
-When reasoning about the order of two events, *A* and *B*, we could come up to any of these conclusions:
+When reasoning about the order of two events, *A* and *B*, we may arrive at one of the following conclusions:
 
 1. *A* happens before *B*: *A &rarr; B*
 2. *B* happens before *A*: *B &rarr; A*
@@ -477,17 +413,47 @@ When reasoning about the order of two events, *A* and *B*, we could come up to a
 
 Looking back at how we defined causality, two concurrent events are independent; they could not have caused each other.
 
-#### Wrapping up
+### Lamport clocks
 
-![Causality example](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/causality.jpg)
+Each node assigns a (logical) timestamp *T* to every event. Lamport clocks are, in fact, event counters.
+These timestamps have the property that if event *A* happens before event *B*, then *T<sub>A</sub> \< T<sub>B</sub>*.
+The "clock" on each node can be a simple software counter, incremented every time a new event occurs.
+The value by which the counter is incremented is not relevant and can even differ per node, what really matters is that it always goes forward.  
+Consider three nodes, *A*, *B* and *C*, each having its clock incremented by 6, 8 and 10 units respectively. At time 6,
+node *A* sends message *m<sub>1</sub>* to process *B*. When this message arrives, the logical clock in node *B* reads 16.
+At time 60, *C* sends *m<sub>3</sub>* to *B*. Although it leaves the node at time 60, it arrives at time 56, according to *B's* clock.
+Following the happens-before relation, since *m<sub>3</sub>* left at 60, it must arrive at 61 or later. Therefore, each
+message carries a sending time according to the sender's clock. When a message arrives and the receiver's clocks shows a
+value prior to the time the message was sent, the receiver fast-forwards its clock to be one more than the sending time, since
+the act of sending the message happens before receiving it. In practice, it is usually required that no two events happen at the same time,
+in other words, each logical timestamp must be unique. To address this problem, we could use tuples containing the node's
+unique identifier and its logical counter value. For example, if we have two events *(40, A)* and *(40, B)*, then
+*(40, A) < (40, B)*.
 
-Suppose that at some point in time you listened to music on your machine, an activity that triggered event *A*. Then, you opened the
-browser (*C*) and accessed a website, implying that the browser sent a request (*D*), which got received by a server (*E*).
-So far, we have the following happens-before relations: *A &rarr; C*, *C &rarr; D*, *A &rarr; D*, *D &rarr; E* and *A &rarr; E*.
-Regarding causality, opening the browser caused a request to be sent, but even though *A &rarr; D*,
-listening to some music certainly did not cause it. Notice that some time ago the server has been restarted (*B*).
-We know this happened before the request was received, *B &rarr; E*, but we can't say that it happened before any of
-the other events on the client. Therefore, *B* is concurrent with all client events: *B || A*, *B || C* and *B || D*.
+![Lamport Clock](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/lamport-clock.svg)
+
+As for the implementation, the logical clock leaves in the middleware layer, between the application layer and the network layer.
+The counter on each node is initialized to 0.
+1. Before executing an internal event, a node increments its counter by 1.
+2. Before sending a message, a node increments its counter first, so all previously occurring events have a lower timestamp. The message's timestamp is set to the incremented counter value and the message is sent over the network.
+3. Upon receiving a message, a node first adjusts its local counter to be the maximum between its current value and the timestamp of the message. After that, the counter is incremented, in order to establish a happens-before relation between the sending and the receipt.
+
+```python
+counter = 0
+
+def execute_event(e: Event):
+    counter += 1
+    e.execute()
+
+def send_message(m: Message):
+    counter += 1
+    m.timestamp = counter
+    m.send()
+
+def receive_message(m: Message):
+    counter = max(counter, m.timestamp)
+    counter += 1
+```
 
 ## References and Further Reading
 
@@ -501,3 +467,4 @@ the other events on the client. Therefore, *B* is concurrent with all client eve
 * [news.ucr.edu](https://news.ucr.edu/articles/2020/09/30/venus-might-be-habitable-today-if-not-jupiter)
 * [Kevin Sookocheff](https://sookocheff.com/post/time/truetime/)
 * [Internals of Google Cloud Spanner](https://blog.searce.com/internals-of-google-cloud-spanner-5927e4b83b36)
+* [All Things Clock, Time and Order in Distributed Systems](https://medium.com/geekculture/all-things-clock-time-and-order-in-distributed-systems-physical-time-in-depth-3c0a4389a838)
