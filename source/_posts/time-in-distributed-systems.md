@@ -455,6 +455,23 @@ def receive_message(m: Message):
     counter += 1
 ```
 
+<div style="display: flex;align-content: center;justify-content: center; padding:0; margin:0;" >
+  <style>
+    #lamport-clock-game {
+      width: 100%;
+      height: 50vh;
+      position: relative;
+    }
+  </style>
+    <script src="/javascript/p5.min.js" type="text/javascript"></script>
+    <script src="/javascript/lamport.js" type="text/javascript"></script>
+    <div id="lamport-clock-game" style="position: relative"></div>
+    <script>
+LamportClocksGame.gameEnv("lamport-clock-game");
+let lamportClocksGame = new p5(LamportClocksGame.newGame, "lamport-clock-game");
+    </script>
+</div>
+
 ## References and Further Reading
 
 * [M. van Steen and A.S. Tanenbaum, Distributed Systems, 3rd ed., distributed-systems.net, 2017.](https://www.distributed-systems.net/index.php/books/ds3/)
