@@ -188,6 +188,7 @@ const LamportClocksGame = (function() {
     }
 
     function setup() {
+        p.describe("Lamport Clocks Animation", p.FALLBACK);
         const [width, height] = scale();
         let canvas = p.createCanvas(width, height);
         canvas.parent(parentId);

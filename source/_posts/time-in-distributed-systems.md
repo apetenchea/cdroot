@@ -298,8 +298,8 @@ Is it possible to achieve this by passing physical timestamps along with the upd
 message is always timestamped with the current time of its sender, obtained from a physical clock.
 Let's simplify the discussion, by assuming that no messages are lost and that messages from the same sender are received
 in the same order they were sent. This is a big assumption, but it allows us to truly focus on the ordering problem.  
-When a node receives a message, it is put into a local queue, ordered according to its timestamp. The receiver multicasts
-an acknowledgment to the other nodes. A node can deliver a queued message to the application it is running only when
+When a node receives a message, it is put into a local queue, ordered according to its timestamp. The receiver broadcasts (sends a message to all other nodes)
+an acknowledgment. A node can deliver a queued message to the application it is running only when
 that message is at the head of the queue and has been acknowledged by each other node.  
 Consider the same scenario as in the example above, involving two nodes, *A* and *B*. *A* sends message *m<sub>1</sub>*, which according
 to *A's* clock, occurs at *t<sub>1</sub>*. On the other side, *B* prepares to send message *m<sub>2</sub>*, timestamped with
@@ -420,40 +420,48 @@ These timestamps have the property that if event *A* happens before event *B*, t
 The "clock" on each node can be a simple software counter, incremented every time a new event occurs.
 The value by which the counter is incremented is not relevant and can even differ per node, what really matters is that it always goes forward.  
 Consider three nodes, *A*, *B* and *C*, each having its clock incremented by 6, 8 and 10 units respectively. At time 6,
-node *A* sends message *m<sub>1</sub>* to process *B*. When this message arrives, the logical clock in node *B* reads 16.
+node *A* sends message *m<sub>1</sub>* to node *B*. When this message arrives, the logical clock in node *B* is incremented and reads 16.
 At time 60, *C* sends *m<sub>3</sub>* to *B*. Although it leaves the node at time 60, it arrives at time 56, according to *B's* clock.
 Following the happens-before relation, since *m<sub>3</sub>* left at 60, it must arrive at 61 or later. Therefore, each
 message carries a sending time according to the sender's clock. When a message arrives and the receiver's clocks shows a
 value prior to the time the message was sent, the receiver fast-forwards its clock to be one more than the sending time, since
 the act of sending the message happens before receiving it. In practice, it is usually required that no two events happen at the same time,
 in other words, each logical timestamp must be unique. To address this problem, we could use tuples containing the node's
-unique identifier and its logical counter value. For example, if we have two events *(40, A)* and *(40, B)*, then
-*(40, A) < (40, B)*.
+unique identifier and its logical counter value. For example, if we have two events *(61, A)* and *(61, B)*, then
+*(61, A) < (61, B)*.
 
 ![Lamport Clock](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/lamport-clock.svg)
 
-As for the implementation, the logical clock leaves in the middleware layer, between the application layer and the network layer.
-The counter on each node is initialized to 0.
+As for the implementation, the logical clock leaves in the middleware layer, between the application network layers.
+The counter on each node is initialized to 0. Then, the algorithm is as follows:
 1. Before executing an internal event, a node increments its counter by 1.
 2. Before sending a message, a node increments its counter first, so all previously occurring events have a lower timestamp. The message's timestamp is set to the incremented counter value and the message is sent over the network.
 3. Upon receiving a message, a node first adjusts its local counter to be the maximum between its current value and the timestamp of the message. After that, the counter is incremented, in order to establish a happens-before relation between the sending and the receipt.
 
 ```python
-counter = 0
+class Node:
+    def __init__(self):
+        self.counter = 0
 
-def execute_event(e: Event):
-    counter += 1
-    e.execute()
-
-def send_message(m: Message):
-    counter += 1
-    m.timestamp = counter
-    m.send()
-
-def receive_message(m: Message):
-    counter = max(counter, m.timestamp)
-    counter += 1
+    def execute_event(e: Event):
+        self.counter += 1
+        e.execute()
+    
+    def send_message(m: Message):
+        self.counter += 1
+        m.timestamp = counter
+        m.send()
+    
+    def receive_message(m: Message):
+        self.counter = max(counter, m.timestamp)
+        self.counter += 1
 ```
+
+When a node receives a message, it is put into a local queue, ordered according to its *(id, timestamp)* tuple.
+The receiver broadcasts an acknowledgment to the other nodes.
+A node can deliver a queued message to the application layer only when that message is at the head of the queue, and
+it has received an acknowledgment from all other nodes. The nodes eventually iterate through the same copy of the local queue,
+which means that all messages are delivered in the same order everywhere.
 
 <div style="display: flex;align-content: center;justify-content: center; padding:0; margin:0;" >
   <style>
@@ -471,6 +479,27 @@ LamportClocksGame.gameEnv("lamport-clock-game");
 let lamportClocksGame = new p5(LamportClocksGame.newGame, "lamport-clock-game");
     </script>
 </div>
+
+### Broadcasting
+
+In order to keep things simple, the explanation above relied on two assumptions:
+- The network is reliable, meaning that messages are never lost.
+- The network is synchronous, meaning that messages are delivered in the same order they were sent.
+ 
+In reality, these assumptions are not always true.
+
+#### Reliable broadcast
+
+When a node wants to broadcast a message, it individually sends that message to every other node. However, it could happen that
+a message is dropped, and the sender crashes before retransmitting it. In this case, some nodes never get the message.
+To improve reliability, we can enlist the help of the other nodes. Therefore, the first time a node receives a message, it
+retransmits it to all other nodes. This way, if some nodes crash, all the remaining nodes are guaranteed to receive every message.
+However, this approach comes with a whopping complexity of *O(n<sup>2</sup>), as each node will receive every message *n - 1* times.
+For a small distributed system, this is not a problem, but for a large one, this is a huge overhead.  
+We can choose to sacrifice some reliability in favor of efficiency. The protocol can be tweaked such that when a node wishes to broadcast
+a message, it sends it only to a subset of nodes, chosen at random. Likewise, on receiving a message for the first time, a node
+forwards it to fixed number of randomly chosen nodes. This is called a [gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol),
+and in practice, if the parameters of the algorithm are chosen carefully, the probability of a message being lost can be very small.
 
 ## References and Further Reading
 
