@@ -57,7 +57,6 @@ const LamportClocksGame = (function() {
             this.timestamp = t;
             this.target = target;
             this.progress = 0;
-            this.speed = speedSlider.value();
         }
 
         scale(r) {
@@ -65,7 +64,7 @@ const LamportClocksGame = (function() {
         }
 
         update() {
-            this.progress += this.speed;
+            this.progress += speedSlider.value();
             this.x = p.lerp(this.start.x, this.target.x, this.progress);
             this.y = p.lerp(this.start.y, this.target.y, this.progress);
         }
