@@ -5,8 +5,6 @@ const LamportClocksGame = (function() {
     let parentId;
     let speedSlider;
     let playButton;
-    let ackCheckbox;
-    let queueCheckbox;
 
     let unitX;
     let unitY;
@@ -15,6 +13,8 @@ const LamportClocksGame = (function() {
     let mouseOverTextBox = false;
     let messages = [];
     let nodes = new Map();
+
+    let timer;
 
     class TextBox {
         constructor(x, y, label, ts) {
@@ -64,7 +64,7 @@ const LamportClocksGame = (function() {
         }
 
         update() {
-            this.progress += speedSlider.value();
+            this.progress += speedSlider.value() / 200;
             this.x = p.lerp(this.start.x, this.target.x, this.progress);
             this.y = p.lerp(this.start.y, this.target.y, this.progress);
         }
@@ -168,6 +168,25 @@ const LamportClocksGame = (function() {
         return [width, height];
     }
 
+    function animate() {
+        let event = false;
+        let send = false;
+        nodes.forEach((node) => {
+            const rnd = p.random();
+            if (rnd < 0.6) {
+                if (!event) {
+                    node.executeEvent();
+                    event = true;
+                }
+            } else if (rnd < 0.8) {
+                if (!send) {
+                    node.sendMessage();
+                    send = true;
+                }
+            }
+        });
+    }
+
     function setup() {
         const [width, height] = scale();
         let canvas = p.createCanvas(width, height);
@@ -185,21 +204,16 @@ const LamportClocksGame = (function() {
             }
         });
 
-        speedSlider = p.createSlider(0.005, 0.05, 0.02, 0.005);
+        speedSlider = p.createSlider(1, 10, 4, 1);
         speedSlider.position(unitX / 5, playButton.y + playButton.height + unitY / 3);
         speedSlider.size(radius * 2);
         p.textAlign(p.CENTER, p.CENTER);
         p.rectMode(p.CENTER);
 
-        ackCheckbox = p.createCheckbox("Ack", true);
-        ackCheckbox.position(unitX / 5, speedSlider.y + speedSlider.height + unitY / 3);
-
-        queueCheckbox = p.createCheckbox("Queue", true);
-        queueCheckbox.position(unitX / 5, ackCheckbox.y + ackCheckbox .height + unitY / 3);
-
         getNodesSetup().forEach((node) =>
             nodes.set(node.id, new Node(node.id, node.x, node.y, radius, node.c))
         );
+        timer = p.millis();
     }
 
     function draw() {
@@ -218,6 +232,15 @@ const LamportClocksGame = (function() {
             msg.update();
             msg.draw();
         });
+
+        if (playButton.html() === "Pause") {
+            const elapsed = p.millis();
+            const period =  5000 / speedSlider.value();
+            if (elapsed - timer >= period) {
+                timer = elapsed;
+                animate();
+            }
+        }
     }
 
     function windowResized() {
@@ -230,8 +253,6 @@ const LamportClocksGame = (function() {
         playButton.size(radius * 2);
         speedSlider.position(unitX / 5, playButton.y + playButton.height + unitY / 3);
         speedSlider.size(radius * 2);
-        ackCheckbox.position(unitX / 5, speedSlider.y + speedSlider.height + unitY / 3);
-        queueCheckbox.position(unitX / 5, ackCheckbox.y + ackCheckbox .height + unitY / 3);
     }
 
     function mouseClicked() {
