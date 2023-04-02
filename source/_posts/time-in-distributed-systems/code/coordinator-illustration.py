@@ -1,5 +1,7 @@
 from manim import *
 
+# This illustration is not used in the blog post, but I'm keeping it for future reference.
+
 class CoordinatorIllustration(Scene):
     def construct(self):
         client = ImageMobject("assets/client.jpg")

@@ -461,7 +461,9 @@ When a node receives a message, it is put into a local queue, ordered according 
 The receiver broadcasts an acknowledgment to the other nodes.
 A node can deliver a queued message to the application layer only when that message is at the head of the queue, and
 it has received an acknowledgment from all other nodes. The nodes eventually iterate through the same copy of the local queue,
-which means that all messages are delivered in the same order everywhere.
+which means that all messages are delivered in the same order everywhere.  
+Click the *Play* button below for a live simulation of Lamport Clocks, or interact with the "servers" yourself,
+by clicking *exec* or *send* on each circle. Use the slider to control the animation speed.
 
 <div style="display: flex;align-content: center;justify-content: center; padding:0; margin:0;" >
   <style>
@@ -471,7 +473,7 @@ which means that all messages are delivered in the same order everywhere.
       position: relative;
     }
   </style>
-    <script src="/javascript/p5.min.js" type="text/javascript"></script>
+    <script src="/javascript/p5-1.6.0.min.js" type="text/javascript"></script>
     <script src="/javascript/lamport.js" type="text/javascript"></script>
     <div id="lamport-clock-game" style="position: relative"></div>
     <script>
@@ -482,7 +484,7 @@ let lamportClocksGame = new p5(LamportClocksGame.newGame, "lamport-clock-game");
 
 ### Broadcasting
 
-In order to keep things simple, the explanation above relied on two assumptions:
+In order to keep things simple, the above explanation was based on two assumptions:
 - The network is reliable, meaning that messages are never lost.
 - The network is synchronous, meaning that messages are delivered in the same order they were sent.
  
@@ -490,15 +492,15 @@ In reality, these assumptions are not always true.
 
 #### Reliable broadcast
 
-When a node wants to broadcast a message, it individually sends that message to every other node. However, it could happen that
+When a node wants to broadcast a message, it individually sends that message to every other node in the cluster. However, it could happen that
 a message is dropped, and the sender crashes before retransmitting it. In this case, some nodes never get the message.
-To improve reliability, we can enlist the help of the other nodes. Therefore, the first time a node receives a message, it
-retransmits it to all other nodes. This way, if some nodes crash, all the remaining nodes are guaranteed to receive every message.
-However, this approach comes with a whopping complexity of *O(n<sup>2</sup>), as each node will receive every message *n - 1* times.
+We can enlist the help of the other nodes to make the system more reliable. The first time a node receives a message, it
+forwards it to everyone else. This way, if some nodes crash, all the remaining ones are guaranteed to receive every message.
+Unfortunately, this approach comes with a whopping *O(n<sup>2</sup>)* complexity, as each node will receive every message *n - 1* times.
 For a small distributed system, this is not a problem, but for a large one, this is a huge overhead.  
 We can choose to sacrifice some reliability in favor of efficiency. The protocol can be tweaked such that when a node wishes to broadcast
 a message, it sends it only to a subset of nodes, chosen at random. Likewise, on receiving a message for the first time, a node
-forwards it to fixed number of randomly chosen nodes. This is called a [gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol),
+forwards it to fixed number of random nodes. This is called a [gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol),
 and in practice, if the parameters of the algorithm are chosen carefully, the probability of a message being lost can be very small.
 
 ## References and Further Reading
