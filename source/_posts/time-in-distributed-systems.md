@@ -506,7 +506,7 @@ and in practice, if the parameters of the algorithm are chosen carefully, the pr
 Notice how similar this looks to a breadth-first search in a graph.
 
 <video controls>
-  <source src="http://localhost:4000/GossipIllustration.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/GossipIllustration.mp4" type="video/mp4">
 Your browser does not support the video tag.
 </video> 
 
@@ -581,7 +581,7 @@ message from the same sender before delivering the previous one.
 
 The approach described so far is not *fault-tolerant*: the crash of a single node can stop all other nodes from being able
 to deliver messages. If a node crashes or is partitioned from the rest of the cluster, the other nodes need a way to detect that.
-We can achieve this by making the nodes periodically send *heartbeat* messages to each other. If a node doesn't receive a heartbeat
+We can achieve this by making the nodes periodically send *heartbeat* messages to each other. If a node doesn't receive heartbeats
 from another node for a long time, it can assume that the other node has crashed. In this case, the messages coming from it
 can be discarded, thus unblocking the queue, and the node can be removed from the cluster. If the node comes back online and
 notices that it has been removed from the cluster, it rejoins the cluster as a "fresh" node and obtains a
