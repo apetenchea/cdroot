@@ -3,6 +3,7 @@ title: Time in Distributed Systems
 date: 2022-11-22 16:31:54
 tags:
 - "Distributed Systems"
+mathjax: true
 ---
 
 Operating Systems do a pretty good job at keeping track of time. When on the same machine, all running processes have a
@@ -457,7 +458,7 @@ class Node:
         self.counter += 1
 ```
 
-When a node receives a message, it is put into a local queue, ordered according to its *(id, timestamp)* tuple.
+When a node receives a message, it is put into a local queue (a priority queue, to be more precise), ordered according to its *(id, timestamp)* tuple.
 The receiver broadcasts an acknowledgment to the other nodes.
 A node can deliver a queued message to the application layer only when that message is at the head of the queue, and
 it has received an acknowledgment from all other nodes. The nodes eventually iterate through the same copy of the local queue,
@@ -486,7 +487,7 @@ let lamportClocksGame = new p5(LamportClocksGame.newGame, "lamport-clock-game");
 
 In order to keep things simple, the above explanation was based on two assumptions:
 - The network is reliable, meaning that messages are never lost.
-- The network is synchronous, meaning that messages are delivered in the same order they were sent.
+- The network is ordered, meaning that messages are delivered in the same order they were sent.
  
 In reality, these assumptions are not always true.
 
@@ -502,6 +503,94 @@ We can choose to sacrifice some reliability in favor of efficiency. The protocol
 a message, it sends it only to a subset of nodes, chosen at random. Likewise, on receiving a message for the first time, a node
 forwards it to fixed number of random nodes. This is called a [gossip protocol](https://en.wikipedia.org/wiki/Gossip_protocol),
 and in practice, if the parameters of the algorithm are chosen carefully, the probability of a message being lost can be very small.
+Notice how similar this looks to a breadth-first search in a graph.
+
+<video controls>
+  <source src="http://localhost:4000/GossipIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
+#### Total order broadcast
+
+If we attach a Lamport timestamp to every message, we can maintain a priority queue and deliver the messages in the total order of their
+timestamps. The question is, when a node receives a message with timestamp *T*, how does it know if it has seen all messages with timestamp less than *T*?
+As the timestamp can be increased by an arbitrary amount, due to local events on each node, there is no way of telling whether
+some messages are missing, or there's been a burst of local events. What we want is a guarantee that messages sent by the same
+node are delivered in the same order they were sent. This includes a node's deliveries to itself, as its own messages are also
+queued first.  
+The solution is to keep a vector of size *N* at each node, where *N* is the number of nodes in the cluster. Each element of the vector is a counter,
+representing the number of messages delivered by each node. Also, nodes maintain a counter of the number of messages they sent.
+A node holds back a message until it receives the next message in sequence from the same sender. Only then, it delivers
+the previous message to the application and increments the corresponding counter for the sender in the vector. This approach is
+called <abbr title="First-In-First-Out">FIFO</abbr> broadcast, and combined with Lamport timestamps, it establishes total order broadcasting.  
+Total order broadcasting is an important vehicle for replicated services, where the replicas are kept consistent by letting them execute
+the same operations in the same order everywhere. As the replicas essentially follow the same transitions in the same finite state machine,
+it is also known as [state machine replication](https://www.cs.cornell.edu/fbs/publications/ibmFault.sm.pdf).
+
+```python
+class Node:
+    def __init__(self):
+        self.id = generate_id()
+        self.counter = 0
+        self.vector = [0] * N
+        self.sent = 0
+        self.queue = PriorityQueue()
+
+    def execute_event(e: Event):
+        self.counter += 1
+        e.execute()
+    
+    def send_message(m: Message):
+        # conceptually, the node also sends the message to itself
+        self.counter += 1
+        self.sent += 1
+        m.timestamp = counter
+        m.sent = sent
+        m.sender_id = self.id
+        m.send()
+    
+    def receive_message(m: Message):
+        self.counter = max(counter, m.timestamp[0])
+        self.counter += 1
+        
+        self.queue.append(m)
+        top = self.queue[0]
+        
+        if (not is_ack(top)):
+            # don't do anything unless the message has been acknowledged by all nodes
+            return
+        
+        for msg in queue[1:]:
+            if msg.sender_id == top.sender_id and msg.sent == top.sent + 1:
+                # the next message in sequence has been received
+                self.queue.pop()
+                top.deliver()
+                self.vector[top.sender_id] += 1
+```
+
+Note that the code above is missing some details, such as the `PriorityQueue` implementation. It is only meant to illustrate
+the idea behind broadcasting. However, I would like to touch upon the `is_ack` function, as it deserves a paragraph of its own.
+A simple way to implement acknowledgements is to have each node broadcast an acknowledgement for every message it receives, containing the ID
+of the message it wants to acknowledge. This way, for every message in the queue, a node has to keep a counter, `msg.ack_count`, which gets
+increments every time it receives an acknowledgement for that message. A message has been fully acknowledged when `msg.ack_count == N`.
+Note that sending an acknowledgement message guarantees that the cluster won't get stuck due to "silent" nodes, i.e. nodes that have nothing
+to send, thus preventing their previous message from being delivered to the application. Recall that a node has to wait for the next
+message from the same sender before delivering the previous one.
+
+#### Practical considerations
+
+The approach described so far is not *fault-tolerant*: the crash of a single node can stop all other nodes from being able
+to deliver messages. If a node crashes or is partitioned from the rest of the cluster, the other nodes need a way to detect that.
+We can achieve this by making the nodes periodically send *heartbeat* messages to each other. If a node doesn't receive a heartbeat
+from another node for a long time, it can assume that the other node has crashed. In this case, the messages coming from it
+can be discarded, thus unblocking the queue, and the node can be removed from the cluster. If the node comes back online and
+notices that it has been removed from the cluster, it rejoins the cluster as a "fresh" node and obtains a
+*snapshot* of the current state from the other nodes.  
+Another approach is to designate a node as *leader*. To broadcast a message, a node has to send it to the leader,
+which then forwards it to all other nodes via *FIFO* broadcast. However, we are faced with the same
+problem as before: if the leader crashes, no more messages can be delivered. Eventually, the other nodes can detect that the leader
+is no longer available, but changing the leader safely is not trivial. In this article, we're going to focus on leaderless algorithms only.
+
 
 ## References and Further Reading
 
