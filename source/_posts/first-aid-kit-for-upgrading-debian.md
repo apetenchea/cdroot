@@ -15,7 +15,7 @@ I put together a list of recipes that I use to fix the most common problems enco
 ## Upgrade procedure
 
 Sometimes I am interested just in upgrading my kernel, but most of the time I want to upgrade the whole system.
-Here's how I do it.
+Here's how I do it:
 
 ### System upgrade
 
@@ -81,7 +81,7 @@ or removal.
    
 ### Missing display manager
 
-Sometimes, you might end up with a system that starts in TTY mode, and you can't get back to the graphical interface.
+Sometimes, you might end up with a system that starts in TTY mode, unable to get back your graphical interface.
 
 1. Check if there are any available display managers installed on your system.
     ```bash
@@ -111,7 +111,7 @@ Sometimes, you might end up with a system that starts in TTY mode, and you can't
     sudo apt install xfce4
     ```
 2. Your display manager should allow you to select the desktop environment you want to use. If it doesn't, you can set it manually by adding
-the following line to `~/.xinitrc`. Replace `startxfce4` with the command that starts your preferred desktop environment.
+the following line to `~/.xinitrc`. If you use another desktop environment, replace `startxfce4` with the command that launches it.
     ```bash
     exec startxfce4
     ``` 
@@ -122,7 +122,7 @@ the following line to `~/.xinitrc`. Replace `startxfce4` with the command that s
 
 #### Related problems
 
-1. Sometimes, in order for your desktop environment to work, you might have to install other missing software. For example,
+1. Sometimes, in order for your desktop environment to work, you have to install missing software. For example,
     when trying to start Xfce for the first time, I got the following error message: `Failed to execute child process “dbus-launch”`.
     To resolve this issue, I had to install the `dbus-x11` package.
     ```bash
@@ -134,7 +134,7 @@ and remove the `Xauthority` file, which turned out to have the wrong file permis
     rm ~/.Xauthority
     ```
 3. If you're stuck, open a TTY and check the logs. Use `less` to navigate the log files, as they may be very long.
-   `:q` closes the file, `:G` takes you to the end of it, and `/<pattern>` searches the file.
+   `:q` closes the file, `:G` takes you to the end of it, and `/<pattern>` is used for searching.
    - `/var/log/Xorg.0.log` for Xorg related issues
    - `/var/log/syslog` for system-related issues
    - `/var/log/auth.log` for authentication-related issues
@@ -145,13 +145,13 @@ and remove the `Xauthority` file, which turned out to have the wrong file permis
     ```bash
     ip addr show
     ```
-2. If all interfaces are _DOWN_, pick the one you want to bring back up. Common names for wired collections start with `eth` or `enp`.
-    For wireless, they should start with `wl`. I find ethernet interfaces easier to set up in such situations, but make sure first that
-    your ethernet cable is plugged in.
+2. If all interfaces are _DOWN_, pick the one you want to bring back up. Common names for wired connections start with `eth` or `enp`.
+    For wireless, they start with `wl`. I find ethernet easier to set up in such situations, but for that make sure
+    your ethernet cable is plugged in. Replace `<interface>` with the name of the chosen network interface.
     ```bash
      sudo ip link set <interface> up
     ```
-3. Configure the network interface
+3. Configure the network interface.
     ```bash
     sudo dhclient <interface>
     ```
@@ -160,7 +160,7 @@ and remove the `Xauthority` file, which turned out to have the wrong file permis
     auto <interface>
     iface <interface> inet dhcp
     ```
-5. Restart networking services
+5. Restart networking services.
     ```bash
     sudo systemctl restart networking
     ```
@@ -182,9 +182,9 @@ and remove the `Xauthority` file, which turned out to have the wrong file permis
 
 ### Incompatible modules when upgrading the kernel
 
-When upgrading to 6.1.0-7-amd64, I personally encountered a problem with the `aufs`. It was the default
+When upgrading to 6.1.0-7-amd64, I encountered a problem with the `aufs` module. It was the default
 storage driver used for managing images and layers on Docker. The module included a `BUILD_EXCLUSIVE` directive which
-does not match my new `kernel/arch/config`. Docker [recommends](https://docs.docker.com/storage/storagedriver/aufs-driver/)
+did not match my new `kernel/arch/config`. Docker [recommends](https://docs.docker.com/storage/storagedriver/aufs-driver/)
 migrating to the `overlay2` storage driver. Here's how I did it:
 1. Stop the Docker service.
     ```bash
@@ -208,4 +208,7 @@ migrating to the `overlay2` storage driver. Here's how I did it:
     ```bash
     sudo systemctl start docker
     ``` 
- 
+
+## Closing thoughts
+Never be afraid of upgrading your system. Breakages happen, and they're not the end of the world. It's not your fault, and it's not the fault of the developers.
+It's just a part of the process. Eventually, as the world moves on, an upgrade is unavoidable. The important thing is to learn from the experience.
