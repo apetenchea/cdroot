@@ -512,28 +512,25 @@ Your browser does not support the video tag.
 
 #### Total order broadcast
 
-If we attach a Lamport timestamp to every message, we can maintain a priority queue and deliver the messages in the total order of their
-timestamps. The question is, when a node receives a message with timestamp *T*, how does it know if it has seen all messages with timestamp less than *T*?
+If we attach a Lamport timestamp to every message, each node maintains a priority queue and delivers the messages in the total order of their
+timestamp. The question is, when a node receives a message with timestamp *T*, how does it know if it has seen all messages with timestamp less than *T*?
 As the timestamp can be increased by an arbitrary amount, due to local events on each node, there is no way of telling whether
 some messages are missing, or there's been a burst of local events. What we want is a guarantee that messages sent by the same
 node are delivered in the same order they were sent. This includes a node's deliveries to itself, as its own messages are also
-queued first.  
+part of the priority queue.  
 The solution is to keep a vector of size *N* at each node, where *N* is the number of nodes in the cluster. Each element of the vector is a counter,
-representing the number of messages delivered by each node. Also, nodes maintain a counter of the number of messages they sent.
-A node holds back a message until it receives the next message in sequence from the same sender. Only then, it delivers
-the previous message to the application and increments the corresponding counter for the sender in the vector. This approach is
-called <abbr title="First-In-First-Out">FIFO</abbr> broadcast, and combined with Lamport timestamps, it establishes total order broadcasting.  
-Total order broadcasting is an important vehicle for replicated services, where the replicas are kept consistent by letting them execute
-the same operations in the same order everywhere. As the replicas essentially follow the same transitions in the same finite state machine,
-it is also known as [state machine replication](https://www.cs.cornell.edu/fbs/publications/ibmFault.sm.pdf).
+representing the number of messages delivered by a particular node. Also, nodes maintain a counter of the number of messages they sent themselves.
+A node holds back a message until it receives the next message in sequence from the same sender. Only then, it considers delivering
+the previous message to the application and increments counter corresponding to the sender. This approach is
+called <abbr title="First-In-First-Out">FIFO</abbr> broadcast, and combined with Lamport timestamps and reliable broadcasting, it establishes total order broadcasting.  
 
 ```python
 class Node:
     def __init__(self):
         self.id = generate_id()
-        self.counter = 0
-        self.vector = [0] * N
-        self.sent = 0
+        self.counter = 0  # Lamport clock
+        self.vector = [0] * N  # vector[i] is the number of messages delivered from node i
+        self.sent = 0  # number of messages sent by this node
         self.queue = PriorityQueue()
 
     def execute_event(e: Event):
@@ -545,11 +542,12 @@ class Node:
         self.counter += 1
         self.sent += 1
         m.timestamp = counter
-        m.sent = sent
+        m.sent = sent  # the message carries the number of messages sent by this node so far
         m.sender_id = self.id
         m.send()
     
     def receive_message(m: Message):
+        # adjust the logical clock
         self.counter = max(counter, m.timestamp[0])
         self.counter += 1
         
@@ -560,37 +558,39 @@ class Node:
             # don't do anything unless the message has been acknowledged by all nodes
             return
         
-        for msg in queue[1:]:
-            if msg.sender_id == top.sender_id and msg.sent == top.sent + 1:
-                # the next message in sequence has been received
-                self.queue.pop()
-                top.deliver()
-                self.vector[top.sender_id] += 1
+        if (top.sent == self.vector[top.sender_id] + 1):
+            # this is indeed the next message to be delivered from that sender
+            self.queue.pop()
+            top.deliver()
+            self.vector[top.sender_id] += 1
 ```
 
-Note that the code above is missing some details, such as the `PriorityQueue` implementation. It is only meant to illustrate
+You probably noticed that the code above is missing some details, such as the `PriorityQueue` implementation. It is only meant to illustrate
 the idea behind broadcasting. However, I would like to touch upon the `is_ack` function, as it deserves a paragraph of its own.
 A simple way to implement acknowledgements is to have each node broadcast an acknowledgement for every message it receives, containing the ID
 of the message it wants to acknowledge. This way, for every message in the queue, a node has to keep a counter, `msg.ack_count`, which gets
-increments every time it receives an acknowledgement for that message. A message has been fully acknowledged when `msg.ack_count == N`.
-Note that sending an acknowledgement message guarantees that the cluster won't get stuck due to "silent" nodes, i.e. nodes that have nothing
-to send, thus preventing their previous message from being delivered to the application. Recall that a node has to wait for the next
-message from the same sender before delivering the previous one.
+increments every time it receives an acknowledgement for that message. A message has been fully acknowledged when `msg.ack_count == N`.  
 
 #### Practical considerations
 
-The approach described so far is not *fault-tolerant*: the crash of a single node can stop all other nodes from being able
+Total order broadcasting is an important vehicle for replicated services, where the replicas are kept consistent by letting them execute
+the same operations in the same order everywhere. As the replicas essentially follow the same transitions in the same finite state machine,
+it is also known as [state machine replication](https://www.cs.cornell.edu/fbs/publications/ibmFault.sm.pdf).  
+The approach described above is not *fault-tolerant*: the crash of a single node can stop all other nodes from being able
 to deliver messages. If a node crashes or is partitioned from the rest of the cluster, the other nodes need a way to detect that.
 We can achieve this by making the nodes periodically send *heartbeat* messages to each other. If a node doesn't receive heartbeats
 from another node for a long time, it can assume that the other node has crashed. In this case, the messages coming from it
-can be discarded, thus unblocking the queue, and the node can be removed from the cluster. If the node comes back online and
-notices that it has been removed from the cluster, it rejoins the cluster as a "fresh" node and obtains a
-*snapshot* of the current state from the other nodes.  
-Another approach is to designate a node as *leader*. To broadcast a message, a node has to send it to the leader,
+can be discarded, thus unblocking the queue, and the node can be removed from the cluster. When a node comes back online and
+notices that it is not part of the cluster, it rejoins the cluster as a "fresh" node and obtains a
+*snapshot* of the current state from the other nodes (easier said than done). Notice that sending periodical heartbeat messages also guarantees
+that the cluster does not get stuck due to "silent" nodes, i.e. nodes having nothing to send, thus preventing their previous
+message from being delivered to the application by all other nodes. Recall that a node has to wait for the next
+message coming from the same sender, before delivering the current one.  
+Often times, a particular node is designed as *leader*. To broadcast a message, a node has to send it to the leader,
 which then forwards it to all other nodes via *FIFO* broadcast. However, we are faced with the same
 problem as before: if the leader crashes, no more messages can be delivered. Eventually, the other nodes can detect that the leader
-is no longer available, but changing the leader safely is not trivial. In this article, we're going to focus on leaderless algorithms only.
-
+is no longer available, but changing the leader safely is not trivial. In order for this article not to become exceedingly complex, we'll stick
+to _leaderless algorithms_.
 
 ## References and Further Reading
 
