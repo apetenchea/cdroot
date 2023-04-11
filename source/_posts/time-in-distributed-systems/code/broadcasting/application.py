@@ -5,8 +5,8 @@ class Application:
     """
     Application layer, in our case, a simple key-value store.
     """
-    def __init__(self, data):
-        self.data = data
+    def __init__(self):
+        self.data = dict()
         # For verification purposes, we keep track of the order in which messages were applied.
         self.order = []
 
@@ -15,4 +15,4 @@ class Application:
         self.data[payload.key] = payload.value
 
     def dump(self):
-        return json.dumps(dict(data=self.data, order=self.order))
+        return dict(data=self.data, order=self.order)

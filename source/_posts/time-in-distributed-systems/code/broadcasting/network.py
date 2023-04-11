@@ -29,7 +29,7 @@ class Network:
             return Acknowledgment(data["msg_timestamp"], data["msg_sender"],
                                   data["ack_timestamp"], data["ack_sender"])
         elif data["type"] == "message":
-            return Message(data["sender"], data["timestamp"], data["order"], self.deserialize(data["payload"]))
+            return Message(data["sender"], data["timestamp"], data["order"], Payload(**data["payload"]))
         else:
             raise ValueError(f"Unknown message type: {data['type']}")
 
@@ -98,9 +98,9 @@ class Network:
         """
         for node in self.nodes:
             try:
-                httpx.post(f'{node}', json=self.serialize(message))
+                httpx.post(f'{node}', json=self.serialize(message), timeout=30)
             except httpx.HTTPStatusError as e:
                 print(f'Error sending message to {node}: {e}')
 
-    def is_acked(self, message):
-        return self.ack[message.get_id()] == len(self.nodes)
+    def is_acked(self, message_id):
+        return self.ack[message_id] == len(self.nodes)
