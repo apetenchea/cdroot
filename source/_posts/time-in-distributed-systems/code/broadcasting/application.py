@@ -1,6 +1,3 @@
-import json
-
-
 class Application:
     """
     Application layer, in our case, a simple key-value store.

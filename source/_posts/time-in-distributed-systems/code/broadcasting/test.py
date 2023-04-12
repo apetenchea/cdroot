@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import httpx
 import random
 from tqdm import tqdm
@@ -6,25 +7,22 @@ from network import Network
 from message import Payload
 
 
-def chaos(ports, req):
-    for _ in tqdm(range(req)):
-        port = random.choice(ports)
-        data = Payload(key=random.randint(0, 100), value=random.randint(0, 1000))
-        try:
-            httpx.post(f'http://localhost:{port}', json=Network.serialize(data), timeout=30)
-        except httpx.HTTPStatusError as e:
-            print(f'Error sending message to {port}: {e}')
+async def chaos(ports, rounds, parallel):
+    for _ in tqdm(range(rounds)):
+        data = [(random.choice(ports), Payload(key=random.randint(0, 100), value=random.randint(0, 1000)))
+                for _ in range(parallel)]
+        async with httpx.AsyncClient() as client:
+            await asyncio.gather(*[client.post(f'http://localhost:{port}', json=Network.serialize(d))
+                                   for port, d in data])
 
 
-def check(ports):
+async def check(ports):
     data = dict()
-    for port in ports:
-        try:
-            r = httpx.get(f'http://localhost:{port}')
+    async with httpx.AsyncClient() as client:
+        for port in ports:
+            r = await client.get(f'http://localhost:{port}')
             r.raise_for_status()
             data[port] = r.json()
-        except httpx.HTTPStatusError as e:
-            print(f'Error sending message to {port}: {e}')
 
     for k, v in data.items():
         for k2, v2 in data.items():
@@ -34,16 +32,20 @@ def check(ports):
                 print(f'Node {k} is not consistent with node {k2}')
                 return
 
-    print('All nodes are consistent')
+    print('All replicas are consistent')
 
 
-if __name__ == '__main__':
+async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ports', nargs='+', type=int)
     parser.add_argument('--chaos', type=int, default=0)
+    parser.add_argument('--parallel', type=int, default=1)
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     if args.chaos:
-        chaos(args.ports, args.chaos)
+        await chaos(args.ports, args.chaos, args.parallel)
     if args.check:
-        check(args.ports)
+        await check(args.ports)
+
+if __name__ == '__main__':
+    asyncio.run(main())

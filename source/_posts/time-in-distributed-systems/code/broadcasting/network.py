@@ -1,3 +1,4 @@
+import asyncio
 import httpx
 from message import Payload, Acknowledgment, Message
 
@@ -33,23 +34,23 @@ class Network:
         else:
             raise ValueError(f"Unknown message type: {data['type']}")
 
-    def process(self, data):
+    async def process(self, data):
         message = self.deserialize(data)
         if isinstance(message, Message):
-            self.process_message(message)
+            await self.process_message(message)
         elif isinstance(message, Payload):
-            self.process_payload(message)
+            await self.process_payload(message)
         elif isinstance(message, Acknowledgment):
-            self.process_ack(message)
+            await self.process_ack(message)
         else:
             raise ValueError(f"Unknown message type: {message.__class__.__name__}")
 
-    def process_payload(self, payload):
+    async def process_payload(self, payload):
         message = self.middleware.create_message(payload)
         self.sent.add(message.get_id())
-        self.broadcast(message)
+        await self.broadcast(message)
 
-    def process_message(self, message):
+    async def process_message(self, message):
         if message.get_id() in self.processed:
             # The middleware has already processed this message.
             return
@@ -61,7 +62,7 @@ class Network:
         # Acknowledge the message.
         ack = self.middleware.create_ack(message)
         self.sent.add(ack.get_id())
-        self.broadcast(ack)
+        await self.broadcast(ack)
 
         if message.get_id() in self.sent:
             # If the message was created by this node, then it already multicasted it once.
@@ -69,9 +70,9 @@ class Network:
 
         # Broadcast the message to all nodes.
         self.sent.add(message.get_id())
-        self.broadcast(message)
+        await self.broadcast(message)
 
-    def process_ack(self, ack):
+    async def process_ack(self, ack):
         if ack.get_id() in self.processed:
             # The middleware has already processed this acknowledgment.
             return
@@ -89,18 +90,23 @@ class Network:
             # If the acknowledgement was already broadcast, don't do it again.
             return
         self.sent.add(ack.get_id())
-        self.broadcast(ack)
+        await self.broadcast(ack)
 
-    def broadcast(self, message):
+    async def broadcast(self, message):
         """
-        Broadcast the message to all nodes, unless it has been already forwarded.
-        This could be optimized by using a gossip protocol.
+        Broadcast a message to all nodes.
+        This could be optimized using a gossip protocol.
         """
-        for node in self.nodes:
-            try:
-                httpx.post(f'{node}', json=self.serialize(message), timeout=30)
-            except httpx.HTTPStatusError as e:
-                print(f'Error sending message to {node}: {e}')
+        tasks = []
+        async with httpx.AsyncClient() as client:
+            for node in self.nodes:
+                task = asyncio.create_task(client.post(f'{node}', json=self.serialize(message), timeout=30))
+                tasks.append(task)
+
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            for url, result in zip(self.nodes, results):
+                if isinstance(result, Exception):
+                    print(f'{url}: {result}')
 
     def is_acked(self, message_id):
         return self.ack[message_id] == len(self.nodes)
