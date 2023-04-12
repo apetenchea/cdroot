@@ -40,6 +40,10 @@ In the end, check that all nodes have the same data:
 python test.py --ports 9000 9001 9002 --check
 ```
 
+To kill all running replicas, use the following command (warning, this will kill all running Python processes):
+- Linux: `pkill python`
+- Windows: `taskkill /f /im python.exe` 
+
 ## Practical considerations
 
 Note that this is not a production-ready implementation. It is meant to be a simple example of a leaderless
