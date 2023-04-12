@@ -565,11 +565,12 @@ class Node:
             self.vector[top.sender_id] += 1
 ```
 
-You probably noticed that the code above is missing some details, such as the `PriorityQueue` implementation. It is only meant to illustrate
+You may have noticed that the code above is missing some details, such as the `PriorityQueue` implementation. It is only meant to illustrate
 the idea behind broadcasting. However, I would like to touch upon the `is_ack` function, as it deserves a paragraph of its own.
 A simple way to implement acknowledgements is to have each node broadcast an acknowledgement for every message it receives, containing the ID
 of the message it wants to acknowledge. This way, for every message in the queue, a node has to keep a counter, `msg.ack_count`, which gets
-increments every time it receives an acknowledgement for that message. A message has been fully acknowledged when `msg.ack_count == N`.  
+incremented every time it receives an acknowledgement for that message. A message is fully acknowledged when `msg.ack_count == N`.  
+I also wrote a complete implementation of the above algorithm, which you can find [here](https://github.com/apetenchea/cdroot/tree/master/source/_posts/time-in-distributed-systems/code/broadcasting).
 
 #### Practical considerations
 
@@ -586,7 +587,7 @@ notices that it is not part of the cluster, it rejoins the cluster as a "fresh" 
 that the cluster does not get stuck due to "silent" nodes, i.e. nodes having nothing to send, thus preventing their previous
 message from being delivered to the application by all other nodes. Recall that a node has to wait for the next
 message coming from the same sender, before delivering the current one.  
-Often times, a particular node is designed as *leader*. To broadcast a message, a node has to send it to the leader,
+Often times, a particular node is designated as *leader*. To broadcast a message, a node has to send it to the leader,
 which then forwards it to all other nodes via *FIFO* broadcast. However, we are faced with the same
 problem as before: if the leader crashes, no more messages can be delivered. Eventually, the other nodes can detect that the leader
 is no longer available, but changing the leader safely is not trivial. In order for this article not to become exceedingly complex, we'll stick
