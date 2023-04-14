@@ -10,7 +10,7 @@ distribution, which means that it's always up-to-date with the latest software. 
 I don't mind that, because I prefer to have the latest compilers around, and I can deal with the occasional breakage.
 I put together a list of recipes that I use to fix the most common problems encountered during an upgrade.
 
-<img src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/first-aid-kit-for-upgrading-debian/media/first-aid-penguin.png" alt="Penguing with first aid kit" style="max-width: 40%; max-height: 40%"> 
+![Penguin](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/first-aid-kit-for-upgrading-debian/media/first-aid-penguin.png)
 
 ## Upgrade procedure
 
