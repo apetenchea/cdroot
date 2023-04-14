@@ -60,6 +60,10 @@ class Network:
         self.middleware.append(message)
 
         # Acknowledge the message.
+        # Note that sending an explicit acknowledgement message is not necessary.
+        # As every node broadcasts each message to all other nodes, the broadcast itself could serve
+        # as an acknowledgement. However, as this is a learning exercise rather than an efficient implementation,
+        # I think it's more important to be explicit.
         ack = self.middleware.create_ack(message)
         self.sent.add(ack.get_id())
         await self.broadcast(ack)

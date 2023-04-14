@@ -518,10 +518,10 @@ As the timestamp can be increased by an arbitrary amount, due to local events on
 some messages are missing, or there's been a burst of local events. What we want is a guarantee that messages sent by the same
 node are delivered in the same order they were sent. This includes a node's deliveries to itself, as its own messages are also
 part of the priority queue.  
-The solution is to keep a vector of size *N* at each node, where *N* is the number of nodes in the cluster. Each element of the vector is a counter,
+The solution is to keep a vector (could also be a map) of size *N* at each node, where *N* is the number of nodes in the cluster. Each element of the vector is a counter,
 representing the number of messages delivered by a particular node. Also, nodes maintain a counter of the number of messages they sent themselves.
 A node holds back a message until it receives the next message in sequence from the same sender. Only then, it considers delivering
-the previous message to the application and increments counter corresponding to the sender. This approach is
+the previous message to the application and increments the counter corresponding to the sender. This approach is
 called <abbr title="First-In-First-Out">FIFO</abbr> broadcast, and combined with Lamport timestamps and reliable broadcasting, it establishes total order broadcasting.  
 
 ```python
@@ -568,8 +568,11 @@ class Node:
 You may have noticed that the code above is missing some details, such as the `PriorityQueue` implementation. It is only meant to illustrate
 the idea behind broadcasting. However, I would like to touch upon the `is_ack` function, as it deserves a paragraph of its own.
 A simple way to implement acknowledgements is to have each node broadcast an acknowledgement for every message it receives, containing the ID
-of the message it wants to acknowledge. This way, for every message in the queue, a node has to keep a counter, `msg.ack_count`, which gets
-incremented every time it receives an acknowledgement for that message. A message is fully acknowledged when `msg.ack_count == N`.  
+of the message it wants to acknowledge. This way, for every message in the queue, a node maintains a counter, `msg.ack_count`, which gets
+incremented every time it receives an acknowledgement for that message. A message is fully acknowledged when `msg.ack_count == N`.
+Note that sending an explicit acknowledgement message is not necessary. As every node broadcasts each message to all other nodes,
+the broadcast itself could serve as an acknowledgement, since it's a clear indication that the node has received the message,
+otherwise it would not have broadcast it.  
 I also wrote a complete implementation of the above algorithm, which you can find [here](https://github.com/apetenchea/cdroot/tree/master/source/_posts/time-in-distributed-systems/code/broadcasting).
 
 #### Practical considerations
@@ -578,20 +581,71 @@ Total order broadcasting is an important vehicle for replicated services, where 
 the same operations in the same order everywhere. As the replicas essentially follow the same transitions in the same finite state machine,
 it is also known as [state machine replication](https://www.cs.cornell.edu/fbs/publications/ibmFault.sm.pdf).  
 The approach described above is not *fault-tolerant*: the crash of a single node can stop all other nodes from being able
-to deliver messages. If a node crashes or is partitioned from the rest of the cluster, the other nodes need a way to detect that.
+to deliver messages. If a node crashes or is partitioned from the rest of the cluster, the other nodes need a way to detect that, in order to recover.
 We can achieve this by making the nodes periodically send *heartbeat* messages to each other. If a node doesn't receive heartbeats
-from another node for a long time, it can assume that the other node has crashed. In this case, the messages coming from it
+from another node for a long time, it can assume that the other node has crashed. In that case, all messages which came from it
 can be discarded, thus unblocking the queue, and the node can be removed from the cluster. When a node comes back online and
 notices that it is not part of the cluster, it rejoins the cluster as a "fresh" node and obtains a
-*snapshot* of the current state from the other nodes (easier said than done). Notice that sending periodical heartbeat messages also guarantees
-that the cluster does not get stuck due to "silent" nodes, i.e. nodes having nothing to send, thus preventing their previous
-message from being delivered to the application by all other nodes. Recall that a node has to wait for the next
-message coming from the same sender, before delivering the current one.  
+*snapshot* of the current state from the other nodes (easier said than done).  
 Often times, a particular node is designated as *leader*. To broadcast a message, a node has to send it to the leader,
 which then forwards it to all other nodes via *FIFO* broadcast. However, we are faced with the same
 problem as before: if the leader crashes, no more messages can be delivered. Eventually, the other nodes can detect that the leader
-is no longer available, but changing the leader safely is not trivial. In order for this article not to become exceedingly complex, we'll stick
-to _leaderless algorithms_.
+is no longer available, but changing the leader safely is not trivial. In order for this article not to become exceedingly complex, we won't go
+into that rabbit hole. Just be aware that in this article we discuss _leaderless algorithms_, but other approaches exist.
+
+### Vector clocks
+
+Going back to the happens-before relation, recall that Lamport clocks have the following property: if *A* happens before *B*,
+then *A* has a smaller timestamp than *B*. However, the converse is not true: if *A* has a smaller timestamp than *B*,
+it doesn't necessarily mean that *A* happened before *B*. In other words, we cannot use Lamport timestamps to determine
+causality between events, since in order to do that, we would need to infer the happens-before relation from the timestamps.
+We are looking for a different algorithm, one that can yield causality information from timestamps.  
+The idea behind vector clocks is very similar to the one behind Lamport clocks. In a way, vector clocks are just an extension
+of Lamport clocks. Instead of having a single counter, each node has a vector of counters, one for each node in the cluster.
+When a node sends a message, it increments its own counter and copies the vector of counters from its local state.
+When a node receives a message, it increments its own counter and updates its vector of counters by taking the maximum
+value between its own vector and the vector in the received message. To formalize this a bit, the vector clock at each
+node has the following properties:
+- *V<sub>i</sub>[i]* is the number of events that have occurred so far at node *i*, sort of like its own logical clock
+- *V<sub>i</sub>[j]*, for every *j* different from *i*, is the number of events that have occurred so far at node *j* as seen by node *i*, in other words, it is *i's* knowledge of the local time at *j*
+
+```python
+class Node:
+    def __init__(self, idx):
+        self.index = idx  # the index of this node in the cluster
+        self.vector = [0] * N  # all counters are initialized to 0
+
+    def execute_event(e: Event):
+        self.vector[self.index] += 1
+        e.execute()
+    
+    def send_message(m: Message):
+        self.vector[self.index] += 1
+        m.timestamp = self.vector  # send the entire vector together with the message
+        m.send()
+    
+    def receive_message(m: Message):
+        for idx in range(N):
+            self.vector[idx] = max(self.vector[idx], m.timestamp[idx])
+        self.vector[self.index] += 1
+```
+
+By examining two vector clocks, we can derive their causal order - whether one happened before the other or they are concurrent.
+If timestamp *t<sub>1</sub>* is smaller than timestamp *t<sub>2</sub>*, then *t<sub>1</sub>* happened before *t<sub>2</sub>*.
+We say a vector is smaller than another if all its components compare less than or equal to the corresponding components
+of the other vector, and there is at least one component that is strictly less than its corresponding component of the other vector.
+In Python, the condition could be written as `all(t1[i] <= t2[i] for i in range(N)) and any(t1[i] < t2[i] for i in range(N))`.  
+To give some examples, consider the following vector clocks:
+- Happens-before: (2, 1, 0) -> (3, 3, 2)
+- Concurrent: (2, 3, 2) || (1, 2, 4)
+
+Below is an animation of the vector clock algorithm in action. At the end, you'll find an image showing all transitions
+from a different perspective.
+
+<video controls>
+  <source src="https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/VectorClocksIllustration.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
 
 ## References and Further Reading
 
