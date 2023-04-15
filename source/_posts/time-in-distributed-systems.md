@@ -655,7 +655,7 @@ indeed a causal relation.
 
 Using vector clocks, it is possible to ensure that a message is delivered to the application only if all messages that
 causally precede it have been delivered as well. Hence, we say the messages are delivered in causal order. The algorithm
-is similar to the one used for FIFO total order broadcast. The vectors themselves contain the same information: *V[i]* is the
+is similar to the one used for FIFO broadcast. The vectors themselves contain the same information: *V[i]* is the
 number of messages that have been delivered to the application, sent from node *i*.
 When a node wants to broadcast a message, it attaches a copy of its own
 vector clock to that message, adjusting with an increment the counter at its corresponding index, thus ensuring that each message
@@ -706,7 +706,69 @@ class Node:
                 self.vector = [max(self.vector[i], delivering.timestamp[i]) for i in range(N)]
 ```
 
+When node *A* sends its message with timestamp *(1, 0, 0)*, it arrives at *B* after 1 second, but due to network latency,
+it takes 6 seconds for *C* to get the message. Therefore, when *B* sends its message with timestamp *(1, 1, 0)*,
+it arrives at *C* ahead of *(1, 0, 0)*. This is what the causal broadcast algorithm tries to correct. *C* notices that
+it's missing a message from *A* and waits for that to be delivered first.
+
 ![Causal broadcast](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/CausalBroadcastIllustration.png)
+
+It is important to note that **causal broadcast is weaker than total order broadcast**. Specifically, if two messages
+are not related in any way to each other, they may be delivered in different order at different locations.
+
+## Hybrid Logical Clocks
+
+We can combine both physical clocks and logical clocks into what's called a hybrid logical clock. The resulting algorithm
+consists of two components:
+- a physical component, usually synchronized to NTP, used to represent the actual wall-clock time
+- a logical component, incremented whenever there are events happening whiting the same physical time
+ 
+Therefore, a <abbr title="Hybrid Logical Clock">HLC's</abbr> timestamp is a tuple *(t, c)*,
+where *t* is the physical time and *c* is the logical time. The physical component is compared first, and in case of
+equality, the logical component is used. HCLs preserve the properties of Lamport clocks: if *A* happens before *B*, then *HLC(A) < HLC(B)*.
+As they maintain a bounded divergence from physical time, they are useful for applications that require a certain degree
+of real-life synchronization. One important aspect of HLCs is that they are always monotonically increasing, unlike simple
+physical clocks.
+Another great thing about them is that their implementation can be of constant space complexity,
+as opposed to vector clocks.  
+
+![HCL](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/hlc.svg)
+
+ArangoDB uses 64-bit integers to represent such hybrid timestamps, out of which 44 bits are used by the physical component
+and the remaining 20 bits by the logical component. A C++ implementation can be found in [HybridLogicalClock.h](https://github.com/arangodb/arangodb/blob/devel/lib/Basics/HybridLogicalClock.h)
+and [HybridLogicalClock.cpp](https://github.com/arangodb/arangodb/blob/devel/lib/Basics/HybridLogicalClock.cpp).
+If you're familiar with Go, you can also check out
+[CockroachDB's implementation](https://github.com/cockroachdb/cockroach/blob/master/pkg/util/hlc/hlc.go). Below,
+I will summarize the algorithm and give a simple Python implementation inspired by the one in ArangoDB.   
+Whenever we want to generate a new timestamp, we first fetch the current physical time from the system. As with logical counters, we
+always update the clock to the maximum value encountered across nodes. If the current physical time is less than or equal to
+the last known physical time in our HLC instance, we keep the physical component as is and increment the logical component.
+Otherwise, if the current physical time is greater, we update the physical component and reset the logical component to 0.
+This way, we ensure that the newly generated timestamp is always greater than the last one.  
+Whenever we receive a timestamp from another node, we proceed to updating our own clock. For the physical component, we always
+take the maximum between the current system time, the last known physical time and the physical component extracted from the received message.
+As for the logical component, we adjust it according to which of these three options has yielded the maximum value, making sure the newly
+generated timestamp always goes forward.
+
+{% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/time-in-distributed-systems/code/hlc.py %}
+
+### In practice
+
+There are various usages for HLCs in modern databases, apart from maintaining causality accross nodes.
+I referred to [ArangoDB](https://www.arangodb.com/) multiple times in this article, but other databases make use of them as well.
+For example, [CockroachDB](https://www.cockroachlabs.com/) relies on them in order to provide their transactional
+isolation guarantees. Another example is [MongoDB](https://www.mongodb.com/), using them in their
+<abbr title="Multi-Version Concurrency Control">MVCC</abbr> storage implementation.
+[MVCC](https://www.postgresql.org/docs/7.1/mvcc.html) is a database technique that allows multiple transactions
+to access and modify shared data concurrently without conflicts. 
+
+![Hybrid Clock Artist Concept](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/hybrid-clock.png)
+
+## Closing thoughts
+
+We discussed various ways in which time is represented in distributed systems and what are their challenges.
+In the end, I would like to leave you with the words of [Anthony G. Oettinger](https://en.wikipedia.org/wiki/Anthony_Oettinger):
+> Time flies like an arrow; fruit flies like a banana. 
 
 ## References and Further Reading
 
@@ -721,3 +783,4 @@ class Node:
 * [Kevin Sookocheff](https://sookocheff.com/post/time/truetime/)
 * [Internals of Google Cloud Spanner](https://blog.searce.com/internals-of-google-cloud-spanner-5927e4b83b36)
 * [All Things Clock, Time and Order in Distributed Systems](https://medium.com/geekculture/all-things-clock-time-and-order-in-distributed-systems-physical-time-in-depth-3c0a4389a838)
+* [Cockroach Labs](https://www.cockroachlabs.com/docs/stable/architecture/transaction-layer.html)
