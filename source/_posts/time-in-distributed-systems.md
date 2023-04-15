@@ -754,7 +754,7 @@ generated timestamp always goes forward.
 
 ### In practice
 
-There are various usages for HLCs in modern databases, apart from maintaining causality accross nodes.
+There are various usages for HLCs in modern databases, apart from maintaining causality across nodes.
 I referred to [ArangoDB](https://www.arangodb.com/) multiple times in this article, but other databases make use of them as well.
 For example, [CockroachDB](https://www.cockroachlabs.com/) relies on them in order to provide their transactional
 isolation guarantees. Another example is [MongoDB](https://www.mongodb.com/), using them in their
