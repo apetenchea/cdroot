@@ -1,6 +1,61 @@
 from manim import *
 
 
+def generate_points(num, distance):
+    points = []
+    start = Dot()
+    points.append(start)
+    for i in range(1, num):
+        point = Dot().next_to(points[-1], RIGHT, distance)
+        points.append(point)
+    return VGroup(*points)
+
+
+class CausalBroadcastIllustration(Scene):
+    def construct(self):
+        dist = 1.5
+        num = 8
+        shift = (num - 1) * dist / 2
+        a = generate_points(num, dist)
+        a.shift(shift * LEFT + 2 * UP)
+        la = Line(a[0], a[-1])
+        b = generate_points(num, dist)
+        b.shift(shift * LEFT)
+        lb = Line(b[0], b[-1])
+        c = generate_points(num, dist)
+        c.shift(shift * LEFT + 2 * DOWN)
+        lc = Line(c[0], c[-1])
+
+        txt_left = 3
+        lbl_a = Text("A", color=WHITE).next_to(a[0], LEFT * txt_left)
+        lbl_b = Text("B", color=WHITE).next_to(b[0], LEFT * txt_left)
+        lbl_c = Text("C", color=WHITE).next_to(c[0], LEFT * txt_left)
+
+        lbl_scale = 0.6
+        m1_txt = "(1, 0, 0)"
+        m1_ab_start = Text(m1_txt, color=BLUE).scale(lbl_scale).next_to(a[0], UP)
+        m1_ab_end = Text(m1_txt, color=BLUE).scale(lbl_scale).next_to(b[1], DOWN)
+        m1_ab = DashedLine(a[0], b[1], color=GREEN)
+        m1_ac_end = Text(m1_txt, color=BLUE).scale(lbl_scale).next_to(c[-2], DOWN)
+        m1_ac = DashedLine(a[0], c[-2], color=GREEN)
+
+        m2_txt = "(1, 1, 0)"
+        m1_ba_start = Text(m2_txt, color=BLUE).scale(lbl_scale).next_to(b[2], DOWN)
+        m1_ba_end = Text(m2_txt, color=BLUE).scale(lbl_scale).next_to(a[3], UP)
+        m1_ba = DashedLine(b[2], a[3], color=GREEN)
+        m1_bc_end = Text(m2_txt, color=GRAY).scale(lbl_scale).next_to(c[4], DOWN)
+        m1_bc = DashedLine(b[2], c[4], color=GRAY)
+
+        m3_txt = "(1, 1, 0)"
+        m3 = Text(m3_txt, color=BLUE).scale(lbl_scale).next_to(c[-1], DOWN)
+        m3_arrow = CurvedArrow(start_point=c[4].get_top(), end_point=c[-1].get_top(), angle=-60 * DEGREES, color=GRAY)
+
+        self.add(a, b, c, la, lb, lc, lbl_a, lbl_b, lbl_c,
+                 m1_ab_start, m1_ab_end, m1_ab, m1_ac_end, m1_ac,
+                 m1_ba_start, m1_ba_end, m1_ba, m1_bc_end, m1_bc,
+                 m3, m3_arrow)
+
+
 class VectorClocksIllustration(Scene):
     def construct(self):
         radius = 1
@@ -94,13 +149,13 @@ class VectorClocksIllustration(Scene):
         dist = 1.5
         num = 8
         shift = (num - 1) * dist / 2
-        a = self.generate_points(num, dist)
+        a = generate_points(num, dist)
         a.shift(shift * LEFT + 2 * UP)
         la = Line(a[0], a[-1])
-        b = self.generate_points(num, dist)
+        b = generate_points(num, dist)
         b.shift(shift * LEFT + 2 * DOWN)
         lb = Line(b[0], b[-1])
-        c = self.generate_points(num, dist)
+        c = generate_points(num, dist)
         c.shift(shift * LEFT)
         lc = Line(c[0], c[-1])
 
@@ -133,16 +188,6 @@ class VectorClocksIllustration(Scene):
                   FadeIn(m3_start), FadeIn(m3_end), FadeIn(m3),
                   FadeIn(m4_start), FadeIn(m4_end), FadeIn(m4),
                   FadeIn(lbl_a), FadeIn(lbl_b), FadeIn(lbl_c))
-
-    @staticmethod
-    def generate_points(num, distance):
-        points = []
-        start = Dot()
-        points.append(start)
-        for i in range(1, num):
-            point = Dot().next_to(points[-1], RIGHT, distance)
-            points.append(point)
-        return VGroup(*points)
 
     @staticmethod
     def get_position_on_circle(c, h, v):

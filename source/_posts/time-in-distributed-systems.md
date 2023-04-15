@@ -647,6 +647,67 @@ from a different perspective.
 Your browser does not support the video tag.
 </video>
 
+Needless to say, the causality relation that can be derived from vector clocks is purely theoretical. In practice,
+without knowing the actual information contained in messages, it is not possible to state with certainty that there is
+indeed a causal relation.
+
+#### Causal broadcast
+
+Using vector clocks, it is possible to ensure that a message is delivered to the application only if all messages that
+causally precede it have been delivered as well. Hence, we say the messages are delivered in causal order. The algorithm
+is similar to the one used for FIFO total order broadcast. The vectors themselves contain the same information: *V[i]* is the
+number of messages that have been delivered to the application, sent from node *i*.
+When a node wants to broadcast a message, it attaches a copy of its own
+vector clock to that message, adjusting with an increment the counter at its corresponding index, thus ensuring that each message
+broadcast by this node has a causal dependency on the previous message broadcast by the same node. Upon receiving a message,
+the node adds it to a queue, only updating its internal clock when messages are delivered to the application. Keep in mind
+that the vector elements don't count events, but rather the number of messages that have been delivered from each sender.  
+Suppose *V* is the vector clock at *A*. In order for node *A* to deliver a message *m* with timestamp *t*, send by node *B*,
+the following conditions must be met:
+- *t[B] = V[B] + 1*, meaning that *m* is the next message that *A* expects from *B*. This is the same condition as for FIFO total order broadcast.
+- *t[i] <= V[i]*, for every *i* different from *B*. This means that *A* has already delivered all messages that *B* has delivered before it sent *m*.
+    This is what differentiates causal broadcast from FIFO total order broadcast. This condition ensures that all messages that may have caused *m* are
+    delivered before *m*.
+
+```python
+class Node:
+    def __init__(self, idx):
+        self.index = idx  #  the index of this node in the cluster
+        self.vector = [0] * N  # all counters are initialized to 0
+        self.sent = 0  #  the number of messages sent so far by this node
+        self.queue = []  # the queue of messages received but not yet delivered
+
+    def send_message(m: Message):
+        m.timestamp = self.vector.copy()  # send the entire vector together with the message
+        m.timestamp[self.index] = self.sent + 1
+        m.index = self.index
+        m.send()
+        self.sent += 1
+    
+    def should_deliver(m: Message):
+        t = m.timestamp
+        condition1 = t[m.index] == self.vector[m.index] + 1
+        condition2 = all(t[i] <= self.vector[i] for i in range(N) if i != m.index)
+        return condition1 and condition2
+    
+    def receive_message(m: Message):
+        self.queue.append(m)
+        delivering = True
+        while delivering:
+            delivering = None
+            for msg in self.queue:
+                t = msg.timestamp
+                if self.should_deliver(msg):
+                    delivering = msg
+                    break
+            if delivering:
+                self.queue.remove(delivering)
+                delivering.deliver()
+                self.vector = [max(self.vector[i], delivering.timestamp[i]) for i in range(N)]
+```
+
+![Causal broadcast](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/CausalBroadcastIllustration.png)
+
 ## References and Further Reading
 
 * [M. van Steen and A.S. Tanenbaum, Distributed Systems, 3rd ed., distributed-systems.net, 2017.](https://www.distributed-systems.net/index.php/books/ds3/)
