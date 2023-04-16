@@ -48,9 +48,9 @@ works fine. Let's say you want to install a prebuilt package named *example.tar.
 1. Make sure the package is not already installed in */usr/local* or */opt*. If that's the case, remove all files from the previous
 installation: `rm -rf /opt/example`.
 2. Extract the contents of the archive into the desired location.
-```sh
-tar -C /opt -xzf example.tar.gz 
-```
+    ```sh
+    tar -C /opt -xzf example.tar.gz 
+    ```
     - -C is used to change the target directory
     - x is used to extract files from the archive
     - z is used to filter the archive through [gzip](https://www.gnu.org/software/gzip/). For *.tar.xz* archives use J instead of z, and for *.tar.bz2* use j.
@@ -69,88 +69,88 @@ export PATH="$PATH:/opt/example/bin"
 You can find the official tutorial on [golang.org](https://golang.org/doc/install).
 
 1. Download the archive. Make sure to choose a recent version.
-```
-wget https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
-```
+    ```
+    wget https://golang.org/dl/go1.17.2.linux-amd64.tar.gz
+    ```
 2. Remove files from the previous installation, if any.
-```
-sudo rm -rf /opt/go
-```
+    ```
+    sudo rm -rf /opt/go
+    ```
 3. Extract the archive.
-```
-sudo tar -C /opt -xzf go1.17.2.linux-amd64.tar.gz
-```
+    ```
+    sudo tar -C /opt -xzf go1.17.2.linux-amd64.tar.gz
+    ```
 4. Edit the `PATH` variable into your *~/.bashrc* and then reload bash config by running `source ~/.bashrc`, or simply restart the shell.
-```sh
-# This line should be in your .bashrc file.
-export PATH="$PATH:/opt/go/bin"
-```
+    ```sh
+    # This line should be in your .bashrc file.
+    export PATH="$PATH:/opt/go/bin"
+    ```
 5. Check it out.
-```
-go version
-go version go1.17.2 linux/amd64
-```
+    ```
+    go version
+    go version go1.17.2 linux/amd64
+    ```
 
 ### ArangoDB
 
 Note that this may also be installed using `apt-get`. You can find details on [arangodb.com](https://www.arangodb.com/download-major/ubuntu/).
 
 1. Choose your version and download the server archive.
-```
-wget https://download.arangodb.com/arangodb38/Community/Linux/arangodb3-linux-3.8.1.tar.gz
-```
+    ```
+    wget https://download.arangodb.com/arangodb38/Community/Linux/arangodb3-linux-3.8.1.tar.gz
+    ```
 2. Remove files from the previous installation, if any.
-```
-sudo rm -rf /opt/arangodb3-linux-3.8.1
-```
+    ```
+    sudo rm -rf /opt/arangodb3-linux-3.8.1
+    ```
 3. Extract the archive.
-```
-sudo tar -C /opt -xzf arangodb3-linux-3.8.1.tar.gz 
-```
+    ```
+    sudo tar -C /opt -xzf arangodb3-linux-3.8.1.tar.gz 
+    ```
 4. Edit the `PATH` variable into your *~/.bashrc* and then `source ~/.bashrc` or restart the shell.
-```sh
-# This line should be in your .bashrc file.
-export PATH="$PATH:/opt/arangodb3-linux-3.8.1/bin"
-```
+    ```sh
+    # This line should be in your .bashrc file.
+    export PATH="$PATH:/opt/arangodb3-linux-3.8.1/bin"
+    ```
 5. Check it out.
-```sh
-arangod --version
-3.8.1
-
-architecture: 64bit
-# ...
-# long output cropped
-```
+    ```sh
+    arangod --version
+    3.8.1
+    
+    architecture: 64bit
+    # ...
+    # long output cropped
+    ```
 
 ### Clang + LLVM
 
 Make sure the release is compatible with your OS version. Official releases available on [github](https://github.com/llvm/llvm-project/releases).
 
 1. Download the archive.
-```
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
-```
+    ```
+    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
+    ```
 2. Remove files from the previous installation, if any.
-```
-sudo rm -rf /opt/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04
-```
+    ```
+    sudo rm -rf /opt/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04
+    ```
 3. Extract the archive. Be mindful of the file extension.
-```
-sudo tar -C /opt -xJf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
-```
+    ```
+    sudo tar -C /opt -xJf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
+    ```
 4. Edit the `PATH` variable into your *~/.bashrc* and then `source ~/.bashrc`, or restart the shell.
-```sh
-# This line should be in your .bashrc file.
-export PATH="$PATH:/opt/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin"
-```
+    ```sh
+    # This line should be in your .bashrc file.
+    export PATH="$PATH:/opt/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin"
+    ```
 5. Check it out.
-```
-clang --version
-clang version 10.0.0 
-Target: x86_64-unknown-linux-gnu
-Thread model: posix
-InstalledDir: /opt/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
-```
+    ```
+    clang --version
+    clang version 10.0.0 
+    Target: x86_64-unknown-linux-gnu
+    Thread model: posix
+    InstalledDir: /opt/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
+    ```
 
 ## References and Further Reading
 
