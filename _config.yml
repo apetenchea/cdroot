@@ -37,6 +37,8 @@ category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
+  - "**/*.js"
+  - "*/*.js"
   - "javascript/*"
   - "_posts/time-in-distributed-systems/code/broadcasting/*"
 
@@ -107,22 +109,14 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: cactus
 theme_config:
-  projects_url: http://github.com/apetenchea
+  projects_url: https://github.com/apetenchea
   direction: ltr
-  mathjax:
-    enable: true
-    per_page: true
-    cdn: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/mathjax.js?config=TeX-MML-AM_CHTML
-  math:
-    enable: true
-    per_page: true
-    engine: mathjax
   nav:
     home: /
     about: /about/
     articles: /archives/
   social_links:
-    github: http://github.com/apetenchea
+    github: https://github.com/apetenchea
     linkedin: https://www.linkedin.com/in/alexandru-petenchea-155301143
     mail: mailto:alex.petenchea@gmail.com
   tags_overview: false

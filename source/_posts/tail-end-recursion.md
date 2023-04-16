@@ -2,7 +2,6 @@
 title: Tail-end recursion
 date: 2019-02-12 11:14:07
 tags: Programming
-mathjax: true
 ---
 
 There are cases when recursion can lead to [stack overflow](https://en.wikipedia.org/wiki/Stack_overflow).
@@ -346,3 +345,5 @@ Restore the previous values of `esi` and `edi`, then return to the caller.
 
 * [Downey, A. and Monje, N., (2008), *Think OCaml: How to Think like a (Functional) Programmer*](http://greenteapress.com/thinkocaml/)
 * [Minsky, Y., Madhavapeddy, A. and Hickey, J., *Real World OCaml*](https://v1.realworldocaml.org/)
+ 
+<script id="MathJax-script" async src="/javascript/mathjax/tex-chtml.js"></script>

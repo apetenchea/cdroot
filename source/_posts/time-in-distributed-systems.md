@@ -3,7 +3,6 @@ title: Time in Distributed Systems
 date: 2022-11-22 16:31:54
 tags:
 - "Distributed Systems"
-mathjax: true
 ---
 
 Operating Systems do a pretty good job at keeping track of time. When on the same machine, all running processes have a
@@ -475,7 +474,7 @@ by clicking *exec* or *send* on each circle. Use the slider to control the anima
     }
   </style>
     <script src="/javascript/p5-1.6.0.min.js" type="text/javascript"></script>
-    <script src="/javascript/lamport.js" type="text/javascript"></script>
+    <script src="/javascript/time-in-distributed-systems/lamport.js" type="text/javascript"></script>
     <div id="lamport-clock-game" style="position: relative"></div>
     <script>
 LamportClocksGame.gameEnv("lamport-clock-game");
@@ -784,3 +783,5 @@ In the end, I would like to leave you with the words of [Anthony G. Oettinger](h
 * [Internals of Google Cloud Spanner](https://blog.searce.com/internals-of-google-cloud-spanner-5927e4b83b36)
 * [All Things Clock, Time and Order in Distributed Systems](https://medium.com/geekculture/all-things-clock-time-and-order-in-distributed-systems-physical-time-in-depth-3c0a4389a838)
 * [Cockroach Labs](https://www.cockroachlabs.com/docs/stable/architecture/transaction-layer.html)
+
+<script id="MathJax-script" async src="/javascript/mathjax/tex-chtml.js"></script>
