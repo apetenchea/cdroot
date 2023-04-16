@@ -33,7 +33,7 @@ thousand lines of code written like that. With some specifiers and a bit of extr
 
 {% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/coding-standards/code/exceptions_better.cpp %}
 
-That would still be hard to read, which takes us to another important reasong for using a coding standard: readability.
+That would still be hard to read, which takes us to another important reason for using a coding standard: readability.
 
 ### Readability
 
@@ -47,25 +47,25 @@ It evaluates an arithmetic expression, such as `1+2*3`. Although it works, it wo
 first place, and secondly, integrate it with another piece of code or add new functionality to it. Because readability can have
 such a great impact on the efficiency of developers, spacing, variable naming and comments are regulated by pretty much
 every coding standard out there. As these grew in size to almost mini-textbooks, it became harder to know all the rules. For this reason,
-most coding standards come with a formatter or a linter. The former checks for stuff like tabs vs spaces or or variable naming using cammelCase vs snake\_case,
+most coding standards come with a formatter or a linter. The former checks for stuff like tabs vs spaces or or variable naming using camelCase vs snake\_case,
 while the latter can perform static analysis and even find bugs. Such tools are used to automatically fix formatting mistakes.
 A great example is the [Go](https://golang.org/) programming language, which comes with its out-of-the-box formatter, [gofmt](https://go.dev/blog/gofmt).
 
 {% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/coding-standards/code/go_bad.go %}
 
-Running `gofmt` on this code producess a much more readable version of itself.
+Running `gofmt` on this code produces a much more readable version of itself.
 
 {% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/coding-standards/code/go_good.go %}
 
 The programming community has developed a variety of coding styles, and we can't really say that one is better than the other.
-Each has its own advantages and disadvantages, but they all preach one common thing: *Be consisten!*. And I'll quote
+Each has its own advantages and disadvantages, but they all preach one common thing: *Be consistent!*. And I'll quote
 [PEP8](https://www.python.org/dev/peps/pep-0008/) here:
 
 >A style guide is about consistency. Consistency with this style guide is important. Consistency within a project is more important.
 Consistency within one module or function is the most important.
 
-As it turns out, style guide recommendations are not always applicable, and in such cases you should not break backwards commpatibility
-with the existing code. Sometimes even the language might not be particulary helpful with your coding standard. For example,
+As it turns out, style guide recommendations are not always applicable, and in such cases you should not break backwards compatibility
+with the existing code. Sometimes even the language might not be particularly helpful with your coding standard. For example,
 in C++ the `new` operator is designed to throw exceptions on failure. If you're following a _do not use exceptions_ policy,
 you'll have to handling this, maybe by using `nothrow`:
 ```C++
@@ -85,7 +85,7 @@ num += --num - num--;
 ```
 This is a confusing way of writing `num = num + num - 1 - num - 1;`. Coding standards are there to prevent such use of
 side effects. It is true that some programmers highly value compact code. This is from the early days of computing,
-when storage was very limited and expensive. Nowadays, that is no longer the case, hence clarity and maintenability
+when storage was very limited and expensive. Nowadays, that is no longer the case, hence clarity and maintainability
 are more valuable.
 Sometimes a statement can prove to be confusing even for the compiler.
 ```C++
@@ -97,7 +97,7 @@ This is because the expression can be divided in two branches of equal priority,
 may decide to execute `num++ * 2` first, ending up with 22, but it may also execute `num++ * 4` first, in which
 case `result` would be 20. You don't even need a coding guideline to tell you how wrong this is, the compiler
 does it for you.  
-To prevent such scenarious from happening, some languages, such as Python, deliberately do not define the `++` and `--` operators.
+To prevent such scenarios from happening, some languages, such as Python, deliberately do not define the `++` and `--` operators.
 However, there's nothing wrong with using them in C or C++, just make sure you keep side effects to a minimum.
 
 ## In practice
@@ -128,7 +128,7 @@ configuration file that could be parsed by all editors and applied on the whole 
 [EditorConfig](https://editorconfig.org/), you can place all of your project's configuration into a single file named `.editorconfig`,
 located at the root of the project directory. This tool is pretty flexible, allowing for custom configurations
 in subdirectories. Although convenient for configuring your editor, note that it is quite simple and only able to take care of the most common
-aspectes, such as indentation and charset.
+aspects, such as indentation and charset.
 
 ## Bottom line
 
@@ -136,7 +136,7 @@ Following a coding guideline is a great thing to do, just don't go over the boar
 matter, thus perfection is not what you should strive for, but maintaining a good balance between productivity
 and beauty is what really counts. *Use auto-formatters whenever you can.* As a matter of fact, many projects are including them in their testing
 pipelines so that style is kept consistent in an automated manner. If you find yourself spending ridiculous amounts of time and
-energy over manking code look pretty, there's a change you might be dealing with [OCD](https://en.wikipedia.org/wiki/Obsessive%E2%80%93compulsive_disorder).
+energy over making code look pretty, there's a change you might be dealing with [OCD](https://en.wikipedia.org/wiki/Obsessive%E2%80%93compulsive_disorder).
 I know it can feel very frustrating, but don't worry, it is more common than you think. Try [CBT](https://en.wikipedia.org/wiki/Cognitive_behavioral_therapy),
 [meditation](https://tergar.org/meditation/) or a self help guide and try to let the auto-formatter do its work.  
 Being proud of your code is a great feeling indeed, but getting things done feels a lot better on the long run.

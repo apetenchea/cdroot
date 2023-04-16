@@ -33,7 +33,7 @@ The interpreter prints the "Stack overflow" message and suggests that the cause 
 approached recursion. The reason why this occurs is because every function call has its own stack frame, so each
 subsequent call to *sum* eats up some more space on the stack. The stack runs out of space,
 thus resulting in a stack overflow. I used the `#trace` command to see what happens during execution.
-It prints, in their order of occurence, all the calls and returns of the traced function.
+It prints, in their order of occurrence, all the calls and returns of the traced function.
 
 ```
 # #trace sum;;
@@ -138,7 +138,7 @@ accumulator set to its initial value.
 - : int = 5000000050000000
 ```
 
-### Dissasembly
+### Disassembly
 
 {% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/tail-end-recursion/code/tail-end.dump %}
 
@@ -252,7 +252,7 @@ For details, read about [arithmetic progressions](https://en.wikipedia.org/wiki/
 
 #### Thorough analysis
 
-This may go out the scope of this article, but I believe such an optimization deservers a more detailed explanation.
+This may go out the scope of this article, but I believe such an optimization deserves a more detailed explanation.
 I will go through it step by step.
 
 ```
@@ -283,7 +283,7 @@ lea edi, dword ptr [esi - 1]
 lea eax, dword ptr [esi - 2]
 ```
 
-The equivallent of the first instruction is `edi = n - 1`. Second instruction is: `eax = n - 2`.
+The equivalent of the first instruction is `edi = n - 1`. Second instruction is: `eax = n - 2`.
 Note that `lea` actually comes from "load effective address", and its original purpose was to handle memory addresses,
 but it is often used for arithmetic operations. 
 

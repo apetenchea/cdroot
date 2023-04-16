@@ -91,7 +91,7 @@ Because these two procedures reside in *kernel32.dll*, the library has to be lin
 them. How could it be linked at runtime, when the procedures to do that must be imported from it? It's like trying
 to unlock a suitcase, but you left the key inside it (happened to me once in an airport).
 
-## Nonconventional ways of linking
+## Non-conventional ways of linking
 
 ### Looking up the stack
 
@@ -131,7 +131,7 @@ could be used to prevent a possible crash, but in this example I was lucky enoug
 
 {% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/linkage/code/stack_linkage.cpp 33 40 %}
 
-Once the base address is found, the rest of the code becomes pretty strainghtforward. By following the [PE format](http://www.openrce.org/reference_library/files/reference/PE%20Format.pdf),
+Once the base address is found, the rest of the code becomes pretty straightforward. By following the [PE format](http://www.openrce.org/reference_library/files/reference/PE%20Format.pdf),
 the `GetProcAddress` procedure can be located inside *kernel32.dll*. Using it, one can easily import other procedures.
 In the full example, I wrote the code for locating `LoadLibraryA`, in order to load *user32.dll* and import `MessageBoxA` from it.
 And yet, the executable has no imports section. [Here](https://github.com/apetenchea/cdroot/blob/master/source/_posts/linkage/code/stack_linkage.cpp) is the full POC.
