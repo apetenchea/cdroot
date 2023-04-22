@@ -24,9 +24,7 @@ At the bottom of the pages that use MathJax, add the following line:
 `hexo -v` - version information  
 `hexo init cdroot` - initialize site (only during repo creation)  
 `hexo server` - start local server  
-`hexo new new-post` - create a new post  
-`hexo new draft new-draft` - create a new draft  
-`hexo new publish new-draft` - publish draft  
+`hexo new post "title"` - create a new post  
 `hexo s -o` - start server and open the blog page in browser
 
 ## Deploy
