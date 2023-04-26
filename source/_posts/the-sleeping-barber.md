@@ -9,10 +9,31 @@ tags:
 
 _The Sleeping Barber_ is a classic synchronization problem. It was used by [Edsger W. Dijkstra](https://en.wikipedia.org/wiki/Edsger_W._Dijkstra)
 as an example in [his lecture notes](https://www.cs.utexas.edu/users/EWD/ewd01xx/EWD123.PDF), illustrating the use of semaphores.
-> There is a barbershop with a separate waiting room.
+> Imagine a barber shop that has a waiting room, separated from the room where the barber works.
 > The waiting room has an entry and next to it an exit to the room with the barber's chair.
 > When the barber has finished a haircut, he opens the door to the waiting room and inspects it.
 > If the waiting room is not empty, he invites the next customer,
 > otherwise he goes to sleep in one of the chairs in the waiting room.
 > The complementary behaviour of the customers is as follows: when they find zero or more customers in the waiting room,
 > they just wait their turn, when they find, however, the sleeping barber — they wake him up.
+
+![Barber Shop](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/the-sleeping-barber/media/barber-shop.svg)
+
+In order to shape the problem further, we are going to assume that the barber shop has a limited number of chairs
+in the waiting room. If a customer enters the shop and all chairs are occupied, he leaves the shop.
+
+## Race conditions
+
+Although you may be already familiar with the concept, I find it useful to start with a brief definition of race conditions,
+as it brings us into a problem-solving mindset. A race condition may occur when two or more processes access and change
+shared data simultaneously. **The outcome of the program depends on the relative timing of these processes,
+which can cause unexpected results.** In our case, the barber and the customers are processes that access and
+change the same data - the waiting room.  
+While it may not be immediately apparent, this barber shop is affected by two race conditions:
+1. The barber may fall asleep while there are customers in the waiting room. Imagine a customer walks in to
+    an empty waiting room, which means the barber is currently giving a haircut, and then proceeds to sit in one 
+    of the waiting chairs. In the meantime, the barber finishes the haircut and goes to check the waiting room. If the
+    customer moves _slowly_, he might not make it to his seat _before_ the barber checks the waiting room. In that case,
+    the barber will think that nobody is waiting for him and fall asleep, leaving the slow customer waiting forever.
+2. Two or more customers may enter the waiting room and try to sit down at the same time. If there's only one chair available,
+    they end up bumping into each other indefinitely, like stuck characters in a video game.
