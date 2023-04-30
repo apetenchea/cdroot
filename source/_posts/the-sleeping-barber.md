@@ -20,7 +20,8 @@ as an example in [his lecture notes](https://www.cs.utexas.edu/users/EWD/ewd01xx
 ![Barber Shop](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/the-sleeping-barber/media/barber-shop.svg)
 
 In order to shape the problem further, we are going to assume that the barber shop has a limited number of chairs
-in the waiting room. If a customer enters the shop and all chairs are occupied, he leaves the shop.
+in the waiting room. If a customer enters the shop and all chairs are occupied, he leaves the shop. Furthermore, before
+going to sleep, the barber sets an alarm clock that wakes him up when it's time to close the shop.
 
 ## Race conditions
 
@@ -41,10 +42,33 @@ While it may not be immediately apparent, the barber shop is affected by two rac
 2. **Two or more customers may enter the waiting room and try to sit down at the same time.** If there's only one free chair available,
     they end up bumping into each other indefinitely, like stuck characters in a video game.
 
-## Solution
+## Classic solution
 
 We need to synchronize access to the waiting room, so that only one process can access it at a time. We can achieve this
 with a simple mutex. Whenever a process (a customer or the barber) wants to check and modify the state of the shared resource
 (the waiting room), it has to acquire the mutex first. When it's done, it releases the mutex, allowing other processes to
-access the resource.
+access the resource. That would be the equivalent of a sliding door, which only allows one person in or out at a time.
+
+![Sliding Door](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/the-sleeping-barber/media/SlidingDoorIllustration.gif)
+
+As for "waking up the barber" and "waiting for the barber to finish a haircut", we can use a
+[C++20 semaphore](https://en.cppreference.com/w/cpp/thread/counting_semaphore).
+
+{% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/the-sleeping-barber/code/classic-solution.cpp 17 22 %}
+
+When the barber comes to work, he opens the shop and executes the `barber` function. Note that we had to use
+[try_acquire_for](https://en.cppreference.com/w/cpp/thread/counting_semaphore/try_acquire_for), checking periodically
+that the shop is still open. Otherwise, if the barber doesn't get any customers before closing time, he never wakes up,
+thus leaving the shop open indefinitely.
+
+{% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/the-sleeping-barber/code/classic-solution.cpp 41 55 %}
+
+When customers arrive, they execute the `customer` function. The customer does not have to loop, as he only needs to
+get a haircut and then leaves. Notice that there's an artificial delay introduced before a customer enters the shop, as
+to randomize the order in which customers arrive.
+
+{% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/the-sleeping-barber/code/classic-solution.cpp 60 74 %}
+
+The full code, together with the `main` function I used for testing, can be found
+[here](https://github.com/apetenchea/cdroot/blob/master/source/_posts/the-sleeping-barber/code/classic-solution.cpp).
 
