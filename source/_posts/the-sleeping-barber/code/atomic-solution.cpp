@@ -51,13 +51,18 @@ void barber() {
  */
 void customer(int id, int delay) {
   std::this_thread::sleep_for(std::chrono::seconds(delay));
-  if (waiting.load() < CHAIRS) {
-    std::cout << "Customer " << id << " enters the barbershop." << std::endl;
-    ++waiting;
-    waiting.notify_one(); // wake up the barber
-  } else {
-    std::cout << "Customer " << id << " leaves the barbershop." << std::endl;
-    return;
+  while (!shuttingDown.load()) {
+    auto w = waiting.load();
+    if (w < CHAIRS) {
+      if (waiting.compare_exchange_strong(w, w + 1)) {
+        std::cout << "Customer " << id << " enters the barbershop." << std::endl;
+        waiting.notify_one(); // wake up the barber
+        break;
+      }
+    } else {
+      std::cout << "Customer " << id << " leaves the barbershop." << std::endl;
+      return;
+    }
   }
   bs.wait(false); // wait until the barber finishes the haircut
   std::cout << "Customer " << id << " got a haircut." << std::endl;
