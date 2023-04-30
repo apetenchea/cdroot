@@ -1,7 +1,7 @@
 /*
  * Program used to illustrate a data-race.
  * Compile it with ThreadSanitizer enabled:
- * clang++ -Wall -O2 -std=c++20 -fsanitize=thread -o data-race data-race.cpp
+ * clang++ -Wall -O2 -std=c++20 -fsanitize=thread -o data-race data-race.cpp -pthread
  */
 
 #include <iostream>

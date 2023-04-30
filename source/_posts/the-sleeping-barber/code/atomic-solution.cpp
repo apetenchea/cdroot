@@ -26,7 +26,7 @@ std::uniform_int_distribution<> dist(1, 3);
  * Cut hair for a random amount of time.
  */
 void haircut() {
-  std::cout << "The barber is cutting hair." << std::endl;
+  std::cout << "The barber is cutting hair.\n";
   auto duration = dist(gen);
   std::this_thread::sleep_for(std::chrono::seconds(duration));
 }
@@ -55,17 +55,17 @@ void customer(int id, int delay) {
     auto w = waiting.load();
     if (w < CHAIRS) {
       if (waiting.compare_exchange_strong(w, w + 1)) {
-        std::cout << "Customer " << id << " enters the barbershop." << std::endl;
+        std::cout << "Customer " << id << " enters the barbershop.\n";
         waiting.notify_one(); // wake up the barber
         break;
       }
     } else {
-      std::cout << "Customer " << id << " leaves the barbershop." << std::endl;
+      std::cout << "Customer " << id << " leaves the barbershop.\n";
       return;
     }
   }
   bs.wait(false); // wait until the barber finishes the haircut
-  std::cout << "Customer " << id << " got a haircut." << std::endl;
+  std::cout << "Customer " << id << " got a haircut.\n";
 }
 
 int main() {
@@ -75,7 +75,7 @@ int main() {
     delay = dist(gen);
   }
 
-  std::cout << "The barbershop is opening." << std::endl;
+  std::cout << "The barbershop is opening.\n";
   std::thread barber_thread(barber);
   for (auto idx = 0; idx < CHAIRS * 2; ++idx) {
     customers[idx] = std::thread(customer, idx, delays[idx]);
@@ -84,7 +84,7 @@ int main() {
     customer.join();
   }
 
-  std::cout << "The barbershop is closing." << std::endl;
+  std::cout << "The barbershop is closing.\n";
 
   // Best friend arrives to tell the barber it's time to go home.
   shuttingDown.store(true);
