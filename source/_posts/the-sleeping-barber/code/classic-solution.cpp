@@ -14,8 +14,7 @@
 #include <thread>
 #include <semaphore>
 
-constexpr static auto CHAIRS = 5;
-
+constexpr static auto CHAIRS = 5;      // number of chairs in the waiting room
 std::atomic_bool shuttingDown{false};  // true when the barbershop is closing
 auto waiting = 0;                      // number of waiting customers
 std::mutex mx;                         // protection for the waiting room
