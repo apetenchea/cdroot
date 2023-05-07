@@ -13,11 +13,11 @@ I've put together explanations of the most commonly used terminology and command
 I often find myself using at work. I hope you'll find them useful too. For the record, at the time of this writing
 I was using git version 2.37.0.
 
-## Terminology
+## Basics
 
 ### Commits and Branches
 
-A **commit** is a snapshot of all the tracked files in your project. It contains the changes made since the previous commit,
+**A commit is a snapshot of all the tracked files in your project.** It contains the changes made since the previous commit,
 along with metadata such as the commit author, timestamp, and a message describing the changes. Commits are organized sequentially,
 each commit pointing to its parent commit. This is how git records the history of a repository. Think about it
 in terms of inheritance, instead of time: a commit inherits the changes of its parent commit, and adds its own changes
@@ -25,7 +25,7 @@ on top of them. Everything in git is relative to something prior. More formally,
 [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph). This way, it is easy to traverse the history
 of a repository and do all kinds of useful operations on it.
 
-![Git commits](http://localhost:4000/commits.png)
+![Git commits](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/handy-git-recipes/media/commits.png)
 
 Every commit is identified by a unique hash, which is a 40-character hexadecimal string. When working with commits, it's rarely necessary to
 reference them by their full identifier. You can pass in only a prefix (first 7 characters should be enough), as
@@ -82,7 +82,31 @@ The usual workflow is to add changes to the staging area, and then commit them.
 git add . # stage all changes
 git commit -m "explaining git"
 ```
+The above was used to generate commit [a561329](https://github.com/apetenchea/cdroot/commit/a56132941d13867937334abc3de47765b49a36c8).
+You may also use the shorthand `git commit -am "explaining git"`, which will automatically stage all changes before committing them.
+However, note that this command will add and commit all the modified files, but not the *newly created* ones. Eventually,
+you'll want to run `git push` to push your changes to the remote repository.
 
-Moving on to branches, a **branch** is just a pointer to a commit. When you create a new branch, it points to the same commit as the branch
+**Moving on to branches, a branch is just a pointer to a commit.** When you create a new branch, it points to the same commit as the branch
 you created it from. When you commit changes to a branch, the branch pointer is updated to point to the new commit. 
 The default branch of a repository is usually called `master` or `main`.
+
+![Git commits](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/handy-git-recipes/media/branching.gif)
+
+Creating a new branch is done by running `git branch <branch-name>`. To switch to a branch, run `git checkout <branch-name>`.
+These two are usually done together, so there's a shorthand for it: `git checkout -b <branch-name>`. Alternatively, you can
+use `git switch <branch-name>` to switch to an existing branch, or `git switch -c <branch-name>` to create a new branch and
+switch to it. `git checkout` is a versatile command with multiple use cases, while `git switch` was introduced only
+to facilitate branch operations. The recommended way is to go with `git switch`, as it has a more intuitive syntax. In the
+example above, I create a new branch called `bug-fix` and switch to it. After making some changes, I commit them.
+
+```bash
+git switch -c bug-fix
+git commit -am "fixing a bug"
+```
+
+If I change my mind and decide to delete the branch, I have to switch back to `main` first and then run `git branch -d bug-fix`.
+Note that, as a safety precaution, this will only work if the branch has been merged into another branch.
+If you want to delete a branch that hasn't been merged yet, you can use `git branch -D <branch-name>`.
+Deleting a remote branch is done by running `git push origin --delete <branch-name>`. Always be cautious when deleting branches,
+as you may loose work that hasn't been merged yet.
