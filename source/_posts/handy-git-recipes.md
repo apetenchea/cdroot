@@ -15,7 +15,7 @@ I was using git version 2.37.0.
 
 ## Basics
 
-### Commits and Branches
+### Commits
 
 **A commit is a snapshot of all the tracked files in your project.** It contains the changes made since the previous commit,
 along with metadata such as the commit author, timestamp, and a message describing the changes. Commits are organized sequentially,
@@ -69,16 +69,16 @@ That is:
   private key, and can be verified using their public key.
 - Commit message: the text of the commit message.
 
-All that information is combined and hashed using the SHA-1 algorithm to produce an unique commit identifier. Here's
+All that information is combined and hashed using the SHA-1 algorithm to produce a unique commit identifier. Here's
 how you can generate it yourself:
-```bash
+```shell
 (printf "commit %s\0" $(git --no-replace-objects cat-file commit dc2727c | wc -c); git cat-file commit dc2727c) | sha1sum
 ```
 
 For an explanation of the command above, check out [Carl Mäsak's gist](https://gist.github.com/masak/2415865). And finally,
 to inspect the changes introduced with this commit, you can run `git show dc2727c`.  
 The usual workflow is to add changes to the staging area, and then commit them.
-```bash
+```shell
 git add . # stage all changes
 git commit -m "explaining git"
 ```
@@ -87,7 +87,9 @@ You may also use the shorthand `git commit -am "explaining git"`, which will aut
 However, note that this command will add and commit all the modified files, but not the *newly created* ones. Eventually,
 you'll want to run `git push` to push your changes to the remote repository.
 
-**Moving on to branches, a branch is just a pointer to a commit.** When you create a new branch, it points to the same commit as the branch
+### Branches
+
+**A branch is just a pointer to a commit.** When you create a new branch, it points to the same commit as the branch
 you created it from. When you commit changes to a branch, the branch pointer is updated to point to the new commit. 
 The default branch of a repository is usually called `master` or `main`.
 
@@ -98,9 +100,9 @@ These two are usually done together, so there's a shorthand for it: `git checkou
 use `git switch <branch-name>` to switch to an existing branch, or `git switch -c <branch-name>` to create a new branch and
 switch to it. `git checkout` is a versatile command with multiple use cases, while `git switch` was introduced only
 to facilitate branch operations. The recommended way is to go with `git switch`, as it has a more intuitive syntax. In the
-example above, I create a new branch called `bug-fix` and switch to it. After making some changes, I commit them.
+example above, I create a new branch called `bug-fix` and switch to it. After making some changes, I commit them:
 
-```bash
+```shell
 git switch -c bug-fix
 git commit -am "fixing a bug"
 ```
@@ -109,4 +111,40 @@ If I change my mind and decide to delete the branch, I have to switch back to `m
 Note that, as a safety precaution, this will only work if the branch has been merged into another branch.
 If you want to delete a branch that hasn't been merged yet, you can use `git branch -D <branch-name>`.
 Deleting a remote branch is done by running `git push origin --delete <branch-name>`. Always be cautious when deleting branches,
-as you may loose work that hasn't been merged yet.
+as you may lose work that hasn't been merged yet.  
+In case you change your mind regarding the name, renaming a branch is easy: switch to it and run `git branch -m <new_branch_name>`.  
+While working with git, you'll notice the term _remote_ being used everywhere. A remote means a copy of the repository that is hosted elsewhere (on Github, for example).
+You can have multiple remotes, and you can push and pull changes to and from them. The default remote is called `origin`, and it's
+essentially a shorthand name for the remote repository's URL:
+
+```shell
+git clone git@github.com:apetenchea/cdroot.git
+```
+
+In this particular case, `origin` will point to `git@github.com:apetenchea/cdroot.git`. You can check what the remotes of
+your repository point to by running `git remote -v`.  
+You can always inspect the current state of your _local_ branch by running `git status`. If it's synchronized with the _remote_, you'll see
+a message like this:
+
+```
+On branch bug-fix/issue-18919
+Your branch is up to date with 'origin/bug-fix/issue-18919'.
+
+nothing to commit, working tree clean
+```
+
+In the example above, `bug-fix/issue-18919` is the name of the _local branch_, and `origin/bug-fix/issue-18919` is the name of the
+_remote branch_. Remote branches always reflect the state of the branch on the remote repository.
+The naming convention is `<remote-name>/<branch-name>`. You can't work on them directly, as they can just be updated from the remote.
+However, you can _pull_ changes from them into your local branch. This is done by running `git pull <remote> <branch-name>`, or simply
+`git pull` if you're already on the branch you want to pull changes into. This will fetch the changes from the remote branch and merge
+them into your local branch.
+If you want to fetch the changes without merging them, you can run `git fetch <remote> <branch-name>`. This 
+will bring the local representation of the remote branch into synchronization with the actual remote.
+
+```shell
+git fetch origin bug-fix/issue-18919
+```
+
+Simply running `git fetch` without any additional arguments will fetch all the changes from all the remote branches.
+If you're behind a slow network connection, this may take a while.
