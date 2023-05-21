@@ -9,9 +9,9 @@ tags:
 There's so many things you can do with it, and so many ways to do them, that it's easy to get lost in the sea of commands and options.
 Truth be told, just a couple of them are enough to leverage 90% of the power of git repositories and cover the main
 needs of developers. That remaining 10% can be quite useful during complex workflows.  
-I've put together explanations of the most commonly used terminology and commands, as well as some recipes which
+I've put together some explanations of the most commonly used terminology and commands, as well as some recipes which
 I often find myself using at work. I hope you'll find them useful too. For the record, at the time of this writing
-I was using git version 2.37.0.
+I am using git version 2.37.0.
 
 ## Basics
 
@@ -27,9 +27,9 @@ of a repository and do all kinds of useful operations on it.
 
 ![Git commits](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/handy-git-recipes/media/commits.png)
 
-Every commit is identified by a unique hash, which is a 40-character hexadecimal string. When working with commits, it's rarely necessary to
-reference them by their full identifier. You can pass in only a prefix (first 7 characters should be enough), as
-git is smart enough to figure out the rest, as long as there exists only one commit with the given prefix. For example, let's consider
+Every commit is identified by a unique hash (SHA-1), which is a 40-character hexadecimal string. When working with commits, it's rarely necessary to
+reference them by their full identifier. You can pass in only a prefix (first 7 characters should be enough) and
+git is smart enough to figure out the rest (as long as there exists only one commit with the given prefix). For example, let's consider
 commit [dc2727cdfe357e4caf40f9c79c35d5232195ca45](https://github.com/apetenchea/cdroot/commit/dc2727cdfe357e4caf40f9c79c35d5232195ca45)
 from this blog's [repository](https://github.com/apetenchea/cdroot). You can check the metadata associated with it
 by running `git --no-replace-objects cat-file commit dc2727c`. The output is:
@@ -61,15 +61,15 @@ Minor fixes
 
 That is:
 - The source tree: SHA-1 hash of the tree object representing the repository's file structure at the time of the commit.
-- Commit parent(s): The SHA-1 hash(es) of the commit parent(s). A commit can have multiple parents in the case of a merge commit.
+- Commit parent(s): The SHA-1 hash(es) of the commit parent(s). A commit can have multiple parents in the case of a merge commit (more on this later).
 - Author: the name and email address of the person who authored the changes, along with the commit timestamp.
 - Committer: the name and email address of the person who made the commit, along with the commit timestamp. This might be 
-  different from the author if the changes were committed by another person.
+  different from the author if the changes were committed by another person, see [this commit for example](https://github.com/ArangoDB-Community/python-arango/commit/d7a0b560f62df370c162dbea08724c30a993c60c).
 - GPG signature: this is optional, and can be used to verify the authenticity of the commit. It is generated using the author's
   private key, and can be verified using their public key.
 - Commit message: the text of the commit message.
 
-All that information is combined and hashed using the SHA-1 algorithm to produce a unique commit identifier. Here's
+All that information is combined and hashed using the SHA-1 algorithm to produce a unique commit identifier. Just for fun, here's
 how you can generate it yourself:
 ```shell
 (printf "commit %s\0" $(git --no-replace-objects cat-file commit dc2727c | wc -c); git cat-file commit dc2727c) | sha1sum
@@ -77,7 +77,7 @@ how you can generate it yourself:
 
 For an explanation of the command above, check out [Carl Mäsak's gist](https://gist.github.com/masak/2415865). And finally,
 to inspect the changes introduced with this commit, you can run `git show dc2727c`.  
-The usual workflow is to add changes to the staging area, and then commit them.
+Before committing, the usual workflow is to add your changes to the staging area.
 ```shell
 git add . # stage all changes
 git commit -m "explaining git"
@@ -85,18 +85,19 @@ git commit -m "explaining git"
 The above was used to generate commit [a561329](https://github.com/apetenchea/cdroot/commit/a56132941d13867937334abc3de47765b49a36c8).
 You may also use the shorthand `git commit -am "explaining git"`, which will automatically stage all changes before committing them.
 However, note that this command will add and commit all the modified files, but not the *newly created* ones. Eventually,
-you'll want to run `git push` to push your changes to the remote repository.
+you'll want to run `git push` to publish your changes to the remote repository.
 
 ### Branches
 
-**A branch is just a pointer to a commit.** When you create a new branch, it points to the same commit as the branch
-you created it from. When you commit changes to a branch, the branch pointer is updated to point to the new commit. 
-The default branch of a repository is usually called `master` or `main`.
+**A branch is a pointer to a commit.** When a new branch is created, it points to the same commit as the branch
+it was created from. In other words, it is a "copy" of the current branch.
+When you commit to a branch, the branch pointer is updated to point to the new commit. 
+The default branch of a repository is usually called `main` or `master`.
 
 ![Git commits](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/handy-git-recipes/media/branching.gif)
 
-Creating a new branch is done by running `git branch <branch-name>`. To switch to a branch, run `git checkout <branch-name>`.
-These two are usually done together, so there's a shorthand for it: `git checkout -b <branch-name>`. Alternatively, you can
+Creating a new branch is done by running `git branch <branch-name>`. To switch branches, run `git checkout <branch-name>`.
+These two steps are usually done together, so there's a shorthand for it: `git checkout -b <branch-name>`. Alternatively, you can
 use `git switch <branch-name>` to switch to an existing branch, or `git switch -c <branch-name>` to create a new branch and
 switch to it. `git checkout` is a versatile command with multiple use cases, while `git switch` was introduced only
 to facilitate branch operations. The recommended way is to go with `git switch`, as it has a more intuitive syntax. In the
@@ -110,10 +111,12 @@ git commit -am "fixing a bug"
 If I change my mind and decide to delete the branch, I have to switch back to `main` first and then run `git branch -d bug-fix`.
 Note that, as a safety precaution, this will only work if the branch has been merged into another branch.
 If you want to delete a branch that hasn't been merged yet, you can use `git branch -D <branch-name>`.
-Deleting a remote branch is done by running `git push origin --delete <branch-name>`. Always be cautious when deleting branches,
-as you may lose work that hasn't been merged yet.  
-In case you change your mind regarding the name, renaming a branch is easy: switch to it and run `git branch -m <new_branch_name>`.  
-While working with git, you'll notice the term _remote_ being used everywhere. A remote means a copy of the repository that is hosted elsewhere (on Github, for example).
+Also, deleting a remote branch is done by running `git push origin --delete <branch-name>`. Always be cautious when deleting branches,
+as you may lose work that hasn't been merged yet. One other thing, renaming a branch is easy: switch to it and run `git branch -m <new_branch_name>`.  
+
+### Remotes
+
+While working with git, you'll notice the term _remote_ being used everywhere. **A remote is a copy of the repository that is hosted elsewhere (on [Github](https://github.com/), for example)**.
 You can have multiple remotes, and you can push and pull changes to and from them. The default remote is called `origin`, and it's
 essentially a shorthand name for the remote repository's URL:
 
@@ -138,13 +141,53 @@ _remote branch_. Remote branches always reflect the state of the branch on the r
 The naming convention is `<remote-name>/<branch-name>`. You can't work on them directly, as they can just be updated from the remote.
 However, you can _pull_ changes from them into your local branch. This is done by running `git pull <remote> <branch-name>`, or simply
 `git pull` if you're already on the branch you want to pull changes into. This will fetch the changes from the remote branch and merge
-them into your local branch.
-If you want to fetch the changes without merging them, you can run `git fetch <remote> <branch-name>`. This 
-will bring the local representation of the remote branch into synchronization with the actual remote.
+them into your local branch.  
+If you want to fetch the changes without switching to that branch, you can run `git fetch <remote> <branch-name>:<branch-name>`. This 
+will bring the local representation of the remote branch into synchronization with the actual remote. Note that `git pull` is just a
+shorthand for a fetch followed by an additional merge step.
+When using fetch, one could, for example, create a new local copy of the remote branch by running `git fetch origin bug-fix/issue-18919:bug-fix/copy-of-issue-18919`.
+Simply running `git fetch` without any additional arguments will fetch all the changes from all the remote branches.
+If you're behind a slow network connection, this may take a while.  
+Finally, `git push` is used to publish your local changes to the remote repository. If you're pushing a new branch, you'll have to
+specify the remote branch name as well:
+```shell
+git push origin <local-branch-name>:<remote-branch-name>
+```
+Note that git forces you to incorporate the latest changes before pushing.
+
+### Merging
+
+**Merging is the process of combining two branches into one.** In git terms, the branch that receives the changes is called
+the _target branch_, while the branch that is merged into it is called the _source branch_. Merging creates a special
+commit called a _merge commit_. The special thing about it is that it has two parents:
+the last commit of the target branch and the last commit of the source branch. The target branch is updated to point to the
+merge commit, while the source branch remains unchanged.  
+In the example below, we branch off _main_ to create a new branch called _bug-fix_. Then, each branch diverges, as we make
+new commits: _c7b_ on _bug-fix_ and _037_ on _main_. Finally, we merge _bug-fix_ into _main_, which introduces a new commit
+(_aaa_) that has both _c7b_ and _037_ as parents. Assuming main is the current branch, this is the equivalent of running
+`git merge bug-fix`.
+
+![Git merge](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/handy-git-recipes/media/merging.gif)
+
+### Rebasing
+
+**Rebasing is the process of moving a branch to a new base commit.** It essentially takes a set of commits and copies them
+somewhere else. The new base commit is usually the tip of another branch. Rebasing is a powerful tool that can be used to
+rewrite history, but it's also a dangerous tool, as it can easily lead to conflicts. Nevertheless, it makes your commit history
+appear cleaner and more linear, which is why it's incorporated in the merging process by some developers. Personally, I don't have a strong preference,
+as long as a consistent workflow is followed for the entire team.  
+In the example below, we branch off _main_ and create a new branch called _bug-fix_. Similar to the previous example, each branch
+diverges, but this time, before merging, we are going to rebase _bug-fix_ onto _main_. This means that we are going to copy the commits from _bug-fix_
+and place them on top of _main_, which moves the point at which _bug-fix_ was branched to the last commit from _main_. After rebasing,
+we can switch back to _main_ and merge _bug-fix_ into it. This will result in a fast-forward merge, as _bug-fix_ is now a direct descendant.
+The resulting history is linear, appearing as if we were working on _main_ all along. Assuming that _bug-fix_ is the current branch, this is the equivalent
+of running:
 
 ```shell
-git fetch origin bug-fix/issue-18919
+git rebase main
+git switch main
+git merge bug-fix
 ```
 
-Simply running `git fetch` without any additional arguments will fetch all the changes from all the remote branches.
-If you're behind a slow network connection, this may take a while.
+![Git rebase](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/handy-git-recipes/media/rebasing.gif)
+
