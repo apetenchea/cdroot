@@ -432,7 +432,7 @@ unique identifier and its logical counter value. For example, if we have two eve
 
 ![Lamport Clock](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/time-in-distributed-systems/media/lamport-clock.svg)
 
-As for the implementation, the logical clock leaves in the middleware layer, between the application network layers.
+As for the implementation, the logical clock lives in the middleware layer, between the application network layers.
 The counter on each node is initialized to 0. Then, the algorithm is as follows:
 1. Before executing an internal event, a node increments its counter by 1.
 2. Before sending a message, a node increments its counter first, so all previously occurring events have a lower timestamp. The message's timestamp is set to the incremented counter value and the message is sent over the network.
@@ -661,7 +661,7 @@ vector clock to that message, adjusting with an increment the counter at its cor
 broadcast by this node has a causal dependency on the previous message broadcast by the same node. Upon receiving a message,
 the node adds it to a queue, only updating its internal clock when messages are delivered to the application. Keep in mind
 that the vector elements don't count events, but rather the number of messages that have been delivered from each sender.  
-Suppose *V* is the vector clock at *A*. In order for node *A* to deliver a message *m* with timestamp *t*, send by node *B*,
+Suppose *V* is the vector clock at *A*. In order for node *A* to deliver a message *m* with timestamp *t*, sent by node *B*,
 the following conditions must be met:
 - *t[B] = V[B] + 1*, meaning that *m* is the next message that *A* expects from *B*. This is the same condition as for FIFO total order broadcast.
 - *t[i] <= V[i]*, for every *i* different from *B*. This means that *A* has already delivered all messages that *B* has delivered before it sent *m*.
