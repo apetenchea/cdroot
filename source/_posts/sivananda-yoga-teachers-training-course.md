@@ -29,8 +29,15 @@ teacher's training course. I am joining an ashram in Southern India, for a month
 The course is organized by the [SIVANANDA YOGA VEDANTA TAPASWINI ASHRAM](https://sivananda.org.in/gudur/), located in
 Gudur, Andhra Pradesh. The dates are 17th Dec 2023 - 13th Jan 2024.
 
-![Sivananda Logo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/Sivananda_IndiaLogo.svg)
+![Sivananda Logo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/Sivananda_IndiaLogo.png)
 
+I found out about this school from the [Neyyar Dam Sivananda YouTube Channel](https://www.youtube.com/@SivanandaDhanwantariAshram).
+I was looking for a school with a traditional approach to yoga and their content resonated well with me.
+There's plenty of Sivananda centers around the world, but I wanted one located in India, as I sought the opportunity
+to experience the culture and the country.  
+The course I'm taking is a 200h Teachers’ Training Course (TTC), based on the ancient [gurukula](https://en.wikipedia.org/wiki/Gurukula)
+system of India where teacher and student live together, in a traditional Ashram. Graduates receive an internationally
+recognized certificate. The school is a member of the [Yoga Alliance](https://www.yogaalliance.org/).
 
 ## Before
 
