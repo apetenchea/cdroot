@@ -62,7 +62,7 @@ The classes are great and the instructors are very knowledgeable. Every week, I 
 and aim for two group classes (one full body workout and a core workout). To get a glimpse of
 what it looks like, check out their [YouTube channel](https://www.youtube.com/@dpointstudio).  
 
-[![D'Point Studio Logo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/dpointstudio-logo-y.png)](https://dpointstudio.ro/)
+[![D'Point Studio Logo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/dpointstudio-logo.jpg)](https://dpointstudio.ro/)
 
 <hr>
 
