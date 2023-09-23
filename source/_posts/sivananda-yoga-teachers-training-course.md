@@ -5,6 +5,8 @@ tags:
   - "Yoga"
 ---
 
+[![By The Unicode Consortium - Derivative work of Om symbol.svg, Public Domain](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/om.svg)](https://commons.wikimedia.org/w/index.php?curid=54100842)
+
 ## Introduction
 
 ### Background
