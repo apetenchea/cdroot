@@ -57,12 +57,12 @@ recognized certificate. The school is a member of the [Yoga Alliance](https://ww
 ### Preparation
 
 Generally, I believe the best way to prepare for something is to do it. So of course, I've been practicing yoga regularly
-at home and in classes. To aid with the physical aspect of it, I'm doing some fitness training at [D'Point Studio](https://dpointstudio.ro/).
+at home and in classes. To aid with the physical aspect of it, I'm doing some fitness training at [D' Point Studio](https://dpointstudio.ro/).
 The classes are great and the instructors are very knowledgeable. Every week, I attend three private training sessions,
 and aim for two group classes (one full body workout and a core workout). To get a glimpse of
 what it looks like, check out their [YouTube channel](https://www.youtube.com/@dpointstudio).  
 
-[![D'Point Studio Logo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/dpointstudio-logo.jpg)](https://dpointstudio.ro/)
+[![D' Point Studio Logo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/dpointstudio-logo.jpg)](https://dpointstudio.ro/)
 
 <hr>
 
@@ -80,7 +80,7 @@ Yoga, at home. I generally use this day to recuperate from the previous day's wo
 8:00 - 9:00 personal training (suspended training)  
 With yoga, you do a lot of pushing exercises, but not so many pulling ones, and on Wednesdays I try to balance that out.
 It's also a great way to build strength in your core and back muscles. Pull-ups are the main part of this workout. The
-progress is generally slow, but steady, and you have to keep doing it regularly maintain the results.
+progress is generally slow, but steady, and you have to keep doing it regularly to maintain the results.
 
 **Thursday**  
 18:30 - 19:30 fitness class (Power Strength - full body workout)  
