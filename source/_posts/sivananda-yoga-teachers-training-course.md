@@ -92,7 +92,7 @@ group is left behind. Generally, my legs are most sore after this workout.
 **Friday**  
 8:00 - 9:00 personal training (workout)  
 A bit more random, depending on how I felt during the week and what me and my trainer decide to focus on. 
-Usually, we try to fine-tune some of the exercises. If I feel there's a muscle group that needs more attention, my training
+Usually, we try to fine-tune some of the exercises. If I feel there's a muscle group that needs more attention, my trainer
 would come up with suitable exercises to target that area. Or, if I don't make it to the group class on Thursday, we might do a
 leg workout.
 
