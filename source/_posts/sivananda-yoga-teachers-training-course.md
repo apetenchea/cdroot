@@ -5,7 +5,7 @@ tags:
   - "Yoga"
 ---
 
-[![By The Unicode Consortium - Derivative work of Om symbol.svg, Public Domain](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/om.svg)](https://commons.wikimedia.org/w/index.php?curid=54100842)
+[![By The Unicode Consortium - Derivative work of Om symbol.svg, Public Domain](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/om.png)](https://commons.wikimedia.org/w/index.php?curid=54100842)
 
 ## Introduction
 
@@ -51,7 +51,7 @@ I was looking for a school with a traditional approach to yoga and their content
 There are plenty of Sivananda centers around the world, but I wanted one located in India, as I sought the opportunity
 to experience the culture and the country.  
 The course I'm taking is a 200h Teachers’ Training Course (TTC), based on the ancient [gurukula](https://en.wikipedia.org/wiki/Gurukula)
-system of India where teacher and student live together, in a traditional Ashram. Graduates receive an internationally
+system of India where teacher and student live together in a traditional Ashram. Graduates receive an internationally
 recognized certificate. The school is a member of the [Yoga Alliance](https://www.yogaalliance.org/).
 
 ## Before
@@ -125,7 +125,7 @@ Here's my [Indian Visa](https://indianvisaonline.gov.in/) mugshot
 
 ### Schedule
 
-In the last couple of months before the course, I become more serious with my preparation. I decided to record my daily
+In the last couple of months before the course, I became more serious with my preparation. I decided to record my daily
 schedule, which I'll share below. I tried to keep it as consistent as possible, but sometimes I had to make adjustments
 to accommodate other commitments. Nevertheless, recording my schedule was a great way to keep myself on track. I'm
 not saying that this is the best way to prepare for a yoga course. Bear in mind I had zero prior experience with yoga
