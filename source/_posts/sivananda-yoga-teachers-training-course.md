@@ -165,6 +165,8 @@ courses, so I'm just sharing my own practice.
 | 20<sup>th</sup> September | [20 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>Suspended Training (morning)                                                                                                                    | 
 | 21<sup>st</sup> September | [20 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>Power Strength Class (evening)                                                                                                                  | 
 | 22<sup>nd</sup> September | [20 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>[Yoga for Hip Flexibility, Sivananda](https://www.youtube.com/watch?v=RQtitfMI3gw) (evening)                                                    | 
+| 23<sup>rd</sup> September | [20 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>[Yoga Nidra for Deep Sleep, Akhanda](https://www.youtube.com/watch?v=LcqppG7RNyk) (evening)                                                     | 
+| 24<sup>th</sup> September | [40 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>[Yoga for Hip Flexibility, Sivananda](https://www.youtube.com/watch?v=RQtitfMI3gw) (evening)<br/>[Yoga Nidra for Deep Sleep, Akhanda](https://www.youtube.com/watch?v=LcqppG7RNyk) (evening)                                                     | 
 
 ### Reading
 
