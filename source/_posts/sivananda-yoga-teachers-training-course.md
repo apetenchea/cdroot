@@ -171,6 +171,7 @@ courses, so I'm just sharing my own practice.
 | 26<sup>th</sup> September | [40 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>[Yoga for Hip Flexibility, Sivananda](https://www.youtube.com/watch?v=RQtitfMI3gw) (evening)                                                                                                 | 
 | 27<sup>th</sup> September | [40 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)                                                                                                                                                                                                  | 
 | 28<sup>th</sup> September | [40 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)                                                                                                                                                                                                  | 
+| 29<sup>th</sup> September | [40 Sun Salutation (Surya Namaskar), Sivananda](https://www.youtube.com/watch?v=w_J9D70rfrE) (morning)<br/>Core Workout (morning)<br/>[Yoga for Hip Flexibility, Sivananda](https://www.youtube.com/watch?v=RQtitfMI3gw) (evening)                                                                      | 
 
 ### Reading
 
