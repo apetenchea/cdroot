@@ -1,9 +1,9 @@
 import ctypes
-import pathlib
+import os
 
 
 class Fnv:
-    lib = ctypes.CDLL(pathlib.Path().absolute() / 'fnv.dll')
+    lib = ctypes.CDLL(os.path.abspath('fnv.dll'))
 
     # auto new_fnv() -> fnv::Fnv1a32*
     lib.new_fnv.restype = ctypes.c_void_p

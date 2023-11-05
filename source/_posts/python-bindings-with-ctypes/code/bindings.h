@@ -11,7 +11,7 @@
 extern "C" {
   EXPORT auto new_fnv() -> fnv::Fnv1a32*;
   EXPORT void delete_fnv(fnv::Fnv1a32* fnv);
-  EXPORT void fnv_update_bytes(fnv::Fnv1a32* fnv, const char* data, std::size_t size);
+  EXPORT void fnv_update_bytes(fnv::Fnv1a32* fnv, const std::uint8_t* data, std::size_t size);
   EXPORT void fnv_update_uint32(fnv::Fnv1a32* fnv, std::uint32_t data);
   EXPORT void fnv_update_uint64(fnv::Fnv1a32* fnv, std::uint64_t data);
   EXPORT void fnv_update_float(fnv::Fnv1a32* fnv, float data);

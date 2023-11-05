@@ -11,4 +11,4 @@ else()
     add_compile_options(-Wall -Werror -O3)
 endif()
 
-add_library(fnv SHARED fnv.cpp)
+add_library(fnv SHARED fnv.cpp bindings.cpp)
