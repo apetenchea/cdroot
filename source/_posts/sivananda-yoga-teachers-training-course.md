@@ -119,9 +119,8 @@ hip-opening and balance poses.
 
 ### Visa
 
-Here's my [Indian Visa](https://indianvisaonline.gov.in/) mugshot
-
-![Indian Visa Photo](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivandanda-yoga-teachers-training-course/media/indian-visa.avif)
+I got my indian visa from [indianvisaonline.gov.in](https://indianvisaonline.gov.in/). I heard there are some websites
+out there which try to pose as the official one, so be careful.
 
 ### Schedule
 
@@ -223,6 +222,14 @@ courses, so I'm just sharing my own practice.
 | 16<sup>th</sup> November  | [Yoga Nidra for Deep Sleep, Akhanda](https://www.youtube.com/watch?v=LcqppG7RNyk) (evening)                                                                                                                                                                                                             | 
 | 17<sup>th</sup> November  | Core Workout (morning)                                                                                                                                                                                                                                                                                  |
 | 18<sup>th</sup> November  | Core Strength Class (morning)                                                                                                                                                                                                                                                                           |
+| 19<sup>th</sup> November  | [Guided Meditation, Ajahn Brahm](https://www.youtube.com/watch?v=9F4y51eHm6s) (evening)                                                                                                                                                                                                                 |
+| 20<sup>th</sup> November  | Lower Body Training (morning)                                                                                                                                                                                                                                                                           |
+| 21<sup>st</sup> November  | [Yoga Nidra for Deep Sleep, Akhanda](https://www.youtube.com/watch?v=LcqppG7RNyk) (evening)                                                                                                                                                                                                             |
+| 22<sup>nd</sup> November  | Suspended Training (morning)                                                                                                                                                                                                                                                                            |
+| 23<sup>rd</sup> November  | Power Strength Class (evening)                                                                                                                                                                                                                                                                          |
+| 24<sup>th</sup> November  | Core Workout (morning)                                                                                                                                                                                                                                                                                  |
+| 25<sup>th</sup> November  | Core Strength Class (morning)                                                                                                                                                                                                                                                                           |
+| 26<sup>th</sup> November  | [Basic Sivananda Open Class](https://www.youtube.com/watch?v=ooLm1_DmqO4&list=PLpfTgRJpza0e6M9wEORDBHzowQtkCO6sA) (morning)                                                                                                                                                                             |
 
 
 ### Reading
