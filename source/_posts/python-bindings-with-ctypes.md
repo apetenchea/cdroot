@@ -6,7 +6,7 @@ tags:
 ---
 
 
-![Python and C Bindings Cyber Image](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/python-bindings-with-ctypes/media/python-c-merged.jpg)
+![Python and C Bindings Cyber Image](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/python-bindings-with-ctypes/media/python-c-merged.avif)
 
 There's plenty of ways to write Python bindings for C/C++ code. The classic, no-frills approach is to use the
 [ctypes](https://docs.python.org/3/library/ctypes.html) module of the standard library. It provides a convenient way to
