@@ -245,7 +245,6 @@ courses, so I'm just sharing my own practice.
 | 9<sup>th</sup> December   | Core Strength Class (morning)                                                                                                                                                                                                                                                                           |
 | 10<sup>th</sup> December  | [Yoga Nidra for Deep Sleep, Akhanda](https://www.youtube.com/watch?v=LcqppG7RNyk) (evening)                                                                                                                                                                                                             |
 | 11<sup>th</sup> December  | Abs and Obliques Training (morning)                                                                                                                                                                                                                                                                     |
-| 12<sup>th</sup> December  | [Guided Meditation, Ajahn Brahm](https://www.youtube.com/watch?v=9F4y51eHm6s) (evening)                                                                                                                                                                                                                 |
 
 ### Reading
 
