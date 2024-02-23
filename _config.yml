@@ -112,7 +112,7 @@ theme_config:
     articles: /archives/
   social_links:
     github: https://github.com/apetenchea
-    linkedin: https://www.linkedin.com/in/alexandru-petenchea-155301143
+    linkedin: https://www.linkedin.com/in/alexandru-petenchea
     mail: mailto:alex.petenchea@gmail.com
   tags_overview: false
   posts_overview:
