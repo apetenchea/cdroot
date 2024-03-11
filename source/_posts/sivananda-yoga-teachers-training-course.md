@@ -350,7 +350,7 @@ night during the course:
 become independent. When I became independent, there were so many things I wanted to do, but I was lacking the energy.
 Now, at this moment, I finally know how it feels to have both.
 
-We were all blessed to have Swami Janardhana Ananda by our side, as the main teacher. Chanting and praying together with
+We were all blessed to have Swami Janardhana Ananda by our side, as the philosophy teacher. Chanting and praying together with
 him was a great experience. One evening, during [Sri Lalitha Sahasranaamam](https://www.youtube.com/watch?v=PGRhM77OSU0),
 I had my deepest meditation ever. It was absolute bliss. After a while, the discomfort in my legs and butt started to
 appear, but the bliss was so intense that it completely overshadowed it. Afterwards, I felt so rested and energized as
@@ -427,7 +427,7 @@ You can find more content on the [ashram's official Instagram page](https://www.
 
 There were people from all walks of life. Some of us were in their 20's, some in their 40's and some in their 60's. We had
 different backgrounds, different cultures, different religions, different languages, but we all had one thing in common:
-we were open-minded. A special shout-out to my roommate, Venkat, a top chemistry researcher from Connecticut, United States,
+we were open-minded. Shout-out to my roommate, Venkat, a top chemistry researcher from Connecticut, United States,
 who came to the ashram in order to dedicate more time to his spiritual practice, as he was doing TTC with us.
 He was a great guy, and we had lots of interesting conversations together about the Bhagavad Gita, understanding Sanskrit,
 and life in general.
@@ -452,10 +452,20 @@ I left the ashram on 14<sup>th</sup> January 2024. It was a very beautiful morni
 our last walking meditation at the nearby lake, which was very blissful. I felt so grateful for the experience, there
 was no room for sadness. I took the train back to Chennai, where I met some of my friends again, as we were all
 going to the airport. I was very happy to spend some more time with a group of fellow ashram yogis from Iran,
-whose flight was at a similar time. That departure was indeed hard, I can tell you that. I was the last to arrive at the gate.  
+whose flight was at a similar time. That departure was indeed hard, I can tell you that. I was the last to arrive at the
+boarding gate.  
 
 ![Morning](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivananda-yoga-teachers-training-course/media/morning-fog.jpg)
 
 ## After
 
-To be continued...
+It took me a while to fully recover. I lost some weight, I was feeling quite hungry. I was also a bit sad,
+as I missed my friends from the ashram. But nevertheless, I immediately applied to become a yoga teacher (part-time).  
+The course focused a lot on the importance of teaching, and they really made us feel confident in our ability to do so.
+For sure, you are not going to become a yoga master in only one month, but you'll have a good foundation to build upon.
+Any chance to polish your teaching skills is great.  
+I led my first yoga class on 12th of February 2024, at [D'Point Studio](https://dpointstudio.ro/).
+Now I can tell you that, with every class, it gets better and better.
+So my advice is, if you're thinking about it, just go for it. You'll be fine.
+
+> Om Tat Sat
