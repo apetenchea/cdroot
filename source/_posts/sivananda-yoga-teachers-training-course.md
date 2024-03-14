@@ -459,13 +459,18 @@ boarding gate.
 
 ## After
 
+> Has this course impacted me in a profound way?  
+> Absolutely.
+
 It took me a while to fully recover. I lost some weight, I was feeling quite hungry. I was also a bit sad,
-as I missed my friends from the ashram. But nevertheless, I immediately applied to become a yoga teacher (part-time).  
+as I missed my friends from the ashram. But nevertheless, I immediately applied to become a yoga teacher (part-time).
 The course focused a lot on the importance of teaching, and they really made us feel confident in our ability to do so.
 For sure, you are not going to become a yoga master in only one month, but you'll have a good foundation to build upon.
 Any chance to polish your teaching skills is great.  
-I led my first yoga class on 12th of February 2024, at [D'Point Studio](https://dpointstudio.ro/).
-Now I can tell you that, with every class, it gets better and better.
+I led my first yoga class on the 12th of February 2024, at [D'Point Studio](https://dpointstudio.ro/).
+I can tell you that, with every class, it gets better and better.
 So my advice is, if you're thinking about it, just go for it. You'll be fine.
 
 > Om Tat Sat
+
+![DPoint](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivananda-yoga-teachers-training-course/media/alex-dpoint.jpg)
