@@ -7,9 +7,10 @@ tags:
 ---
 
 I've been writing a lot of C++ code at [ArangoDB](https://github.com/arangodb/arangodb) lately. Most people want their
-databases to run on top of some Linux distro, which makes perfect sense, but we support Windows as well.
-Even though that comes with extra maintenance costs, I think it's a good idea. By building our project with
-different compilers, we make sure the code stays portable and uses only standard features.
+databases to run on top of some Linux distro, which makes perfect sense, but ArangoDB supports Windows as well (at least
+they did, until version 3.12).
+Even though that comes with extra maintenance costs, I think it's a good idea. By building your project with
+different compilers, you're making sure the code stays portable and uses only standard features.
 Clearly, multiple compilers can point out more potential issues together. By testing our project on different operating
 systems, we see how it behaves under various circumstances, thus making sure it doesn't rely on platform
 specific behavior. I once stumbled across a stack overflow that was mostly reproduced when running the tests on Windows,
