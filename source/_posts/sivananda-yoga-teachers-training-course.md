@@ -3,6 +3,7 @@ title: sivananda yoga teachers' training course
 date: 2023-09-20 19:26:42
 tags:
   - "Yoga"
+  - "Meditation"
 ---
 
 [![By The Unicode Consortium - Derivative work of Om symbol.svg, Public Domain](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/sivananda-yoga-teachers-training-course/media/om.png)](https://commons.wikimedia.org/w/index.php?curid=54100842)
