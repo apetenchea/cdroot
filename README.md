@@ -1,4 +1,4 @@
-# cdroot
+# cd /root
 
 This is the source of https://apetenchea.github.io.  
 If you want to set up a similar blog, here's a nice [article](https://angelkyriako.github.io/2017/01/24/hexo-tutorial/).
