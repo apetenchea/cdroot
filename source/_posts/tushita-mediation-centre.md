@@ -359,3 +359,5 @@ to sort out through everything, after which I started to feel a weird burning se
 that it was being caused by the instant and continuous stimulus the phone was providing (messaging, web browsing, notifications, etc.).
 If there's one thing I'm sure of now, is that spending time on our phones can be very tiring and over-stimulating,
 often without us even realizing it. Tried and tested.
+
+> May all beings be happy!
