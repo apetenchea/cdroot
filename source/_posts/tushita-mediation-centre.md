@@ -43,6 +43,13 @@ which you may find interesting to walk around.
 |--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | ![Courtyard](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/courtyard.jpg) | ![Stupa](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/stupa.jpg)  |
 
+Finally, there's lots of monkeys around, so be careful with your belongings. Also, they can get quite aggressive, so
+you may want to avoid eye contact or smiling (eg. showing your teeth) at them. Don't try to pet the baby monkeys, as
+their mothers can be very protective. The staff at Tushita will give you a briefing on how to behave around them, and
+they'll urge you to keep your doors and windows closed, as the monkeys can get inside the rooms and make a mess. Most
+importantly, don't feed them. I know they're cute, but think about the consequences. You're going to be there for a
+short while, whereas all the monks and nuns living in the area have to deal with them on a daily basis.
+
 ### Registration
 
 For registration, I followed the instructions on [their website](https://tushita.info/). It was pretty basic, I just had
@@ -97,7 +104,11 @@ another place. It is not possible to stay as a tourist at Tushita, and they are 
 ## Courses
 
 Both courses I attended were led by Venerable Thubten Wangdu, an Austrian monk who has been involved in the study and
-practice of Tibetan Buddhism since 2012. His presentations are jaw-dropping, and he has a great sense of humor.  
+practice of Tibetan Buddhism since 2012. His presentations are jaw-dropping, and he has a great sense of humor. I have
+attended "Introduction to Buddhism" on March 19-28, 2024, and "Transforming the Mind: The 7-Point Mind Training" on
+April 3-11, 2024.
+
+![Thubten Wangdu](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/wangdu.jpg)
 
 ### Introduction to Buddhism
 
@@ -139,7 +150,7 @@ energy as they flutter in the wind. Monks living in the area often spend several
 lifestyle devoid of modern comforts like hot water or electricity.
 You can read more about the schedule on [tushita.info](https://tushita.info/programs/introduction-to-buddhism/typical-introduction-to-buddhism-course-schedule/).
 
-#### Philosophy
+#### Lectures
 
 I can't summarize the entire course here, but I can tell you that it was a very enriching experience. I'll try to give
 you a glimpse of the most interesting ideas that I've written down in my notebook.
@@ -149,14 +160,15 @@ The course starts by introducing two types of meditation:
 - analytical meditation: developing our insight and positive qualities
 
 We got to practice both throughout the course. The meditation sessions were led by Manuela, whose experience and dedication
-to the practice could be felt by everybody. There was patience and understanding in her voice, and she was always with
+to the practice could be felt by everybody. There was patience and understanding in her voice, as she was always with
 a big smile on her face, ready to answer any questions.
 
 When we talked about the mind, it was defined as "that which is clear and knowing" (like fire is that which is hot and
-burning). They say the mind has no beginning, no end, and it does not originate from your birth. Every moment of
-consciousness comes from a former moment of consciousness, and the first moment of consciousness from this life comes
-from the last moment of consciousness from a past life. This is avery interesting concept, and we explored it in depth
-during the course.  
+burning). They said the mind has no beginning, no end, and it does not originate from our birth. Every moment of
+consciousness comes from a former moment of consciousness, and the first moment of consciousness in this life comes
+from the last moment of consciousness from the past life. This is a very interesting concept, and we explored it in depth
+during the course. According to Buddhism, each of us have an individual stream of consciousness. There is not one source
+from which we emerge and then go bck to (such as Brahman in Hinduism).  
 
 We also talked a lot about the way we perceive reality, and how our mind creates our world. I wrote down one of my
 favorite quotes from the course:
@@ -192,6 +204,8 @@ You should use it to be best of your ability, ultimately avoiding any activities
 let alone something you find displeasing or worthless. The body that you identify yourself with is going to get old
 and eventually become unusable. It is only the mind that crosses over to the next life. However, you are never going to
 get again _exactly_ this combination of body and mind, which you call "I". Make the best out of this opportunity.
+> We are often too concerned with what's going to happen in a non-existent future. Some people are living for a mere
+> projection.
 
 Remember kindness. Every person you know has been once a stranger to you. In Buddhism, they even go one step further and
 say that every person you know has been your mother in a past life. They have taken care of you, fed you, and protected
@@ -211,7 +225,137 @@ If the beauty would be in the flower the way it appears to you, then everybody w
 The is not the case, as some may find it ugly. Beauty comes from the mind, not from the object. The same goes for
 happiness, sadness, and all other emotions. They are not in the object, they are in the mind.
 
+![Karma](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/karma.jpg)
+
+Karma is one of the most fundamental teachings of Buddhism. In Sanskrit, the word means "action". Karma can be generated
+by one's body, speech or mind. When we perform wholesome or unwholesome actions, they are stored as karmic seed within
+our consciousness. When the right conditions are present, these karmic seeds will generate karmic effects. All karma will
+eventually ripen and produce karmic effects, it is just a matter of time. This is not a reward nor a punishment, it is
+a law of the universe, just like gravity.
+
+> Nothing is permanent, everything is subject to change.
+
+![Kalpa](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/kalpa.jpg)
+
+The concept of time and space was also discussed, although not in such great detail as I would have liked. In Buddhism,
+a very long unit of time is called a _kalpa_. The length of time represented by a kalpa is simply mind-bending. Imagine a huge
+container measuring 10 kilometers in each direction - that's basically a cube with the volume of 1000 m<sup>3</sup>.
+Now, fill that container with fine mustard seeds, and take one seed out every 100 years. The time it would take to empty
+the container is the length of one minor kalpa. Human beings typically live for about 100 years; some insects are born
+at down and are dead by dusk. To such an insect, one day is the equivalent of one hundred years in human terms. Although
+there is a huge difference between one day and one hundred years, each existence spans a _lifetime_. According to Buddhism,
+there are beings with far longer life spans then human beings, stretching our imagination even further. Beyond the heavens
+of the form realm, there are the formless realms. Beings in this realm can live up to 80000 _major kalpas_. The duration
+of such a life span is incomprehensible (however, OpenAI's DALL-E model does a pretty cool job).
+Regardless of how long these beings live, they are still subject to the law of impermanence, trapped in the cycle of
+birth and death. They still cannot transcend the boundaries of time and space.
+
+![Formless Realm](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/formless.jpg)
+
+We touched upon lots of other topics, such as the 4 Noble Truths, the 8-fold Path, the 6 Perfections, the Wheel of Life,
+Bodhicitta, and so on. I can't cover everything here, but I hope I've given you a taste of what to expect.
+
 #### Meditations
 
-Pretty much every meditation session has given me something. However, I'll try to highlight the ones that I found
-most impactful.
+Pretty much every meditation session has given me something. I remember the meditations on "Death Awareness" and
+"Forgiveness" were quite impactful for most of the group. During the "Karma Purification" session I felt a strong
+vibration while chanting the mantra "Tayatha Om Mune Mune, Mahamunaye Soha" and visualizing the Buddha. I felt really
+tired after that, but in a good way. The "Loving Kindness" meditation was quite moving, as we were asked to
+visualize a person we love, then a person we have neutral feelings towards, then a person we have difficulties with,
+and finally all sentient beings. The idea is to cultivate a feeling of love towards all beings, regardless of their
+relationship with you. We also did a "Tonglen" mediation, which is a very powerful Tibetan Buddhist meditation practice
+for cultivating compassion. And, I would like to highlight one of my favorites, when one evening we circled the main
+stupa outside and changed "Om Mani Padme Hum" for like two hours. I am deeply grateful towards everybody which took part
+that <span>&#128591;</span>.  
+All in all, I encourage you to attend, you'll be in for quite a ride. Don't worry that much about sitting cross-legged
+for hours, as they have plenty of chairs available.
+
+### Transforming the Mind: The 7-Point Mind Training
+
+This was a 9-day intermediate course, which followed a similar structure to the previous one. The course was designed
+to build upon the knowledge gained during the "Introduction to Buddhism" course, and to deepen the understanding of
+Lojong (mind training) practices. We studied the writings of Chekawa Yeshe Dorje (1101-1175), a Tibetan Buddhist master
+who compiled the _Seven-Point Mind Training_. It is one of the earliest works organising the Lojong teachings into a
+systematic framework. In order to follow this course, you should have completed the "Introduction to Buddhism" course in
+one of the [FPMT](https://fpmt.org/) centres who offer it, such as [Tushita](https://tushita.info/) or
+[Kopan Monastery](https://kopanmonastery.com/).  
+I unfortunately felt sick during the course, and while I still attended 90% of the lectures and meditations,
+I did not take as many notes as I did during the first course. So I won't go into as much detail as I did with the
+previous one, but I can tell you that this was a very enriching experience too. In between the teachings, I remember
+Ven. Wangdu always telling us about how bad the "spiritual ego" can be, and how we should be careful not to fall into that trap.
+That's basically when we start to think we're better than others because we're more spiritual, and we show off our
+knowledge or our new mala beads.
+> Our good qualities cannot grow on the rocky peaks of pride.
+
+## Other Activities
+
+If you plan on attending a silent retreat, you might want to take a few days off after the course to relax and slowly
+re-adjust to the "outside" world. Flying back to Delhi right after such an experience can be tiring. Also, the area around
+McLeod Ganj is very beautiful, it's definitely worth exploring it if you have some extra time.
+
+### Jagatram Niwas
+
+Outside the meditation centre, I stayed at [Jagatram Niwas](https://jagatramniwas.com/), a guest house located in Upper
+Bhagsu, right next to McLeod Ganj. It is way more silent and peaceful than McLeod Ganj, while still being close to all
+the cafes and restaurants. Depending on your pace, it's a 10-15 minute walk to the main square, and a 25-30 minute walk
+to Tushita (going by car is also possible). The rooms are clean and spacious, and the guest house is run by a very nice family, who are always ready to
+help you with anything you need. Whatever I asked for, from car rides to laundry, flexible booking, meals and trekking, they were always
+there for me. They really made me feel like an honored guest, and I am very grateful for that. Not to mention, the
+delicious home-cooked meals they served me. We had dinner together a few times, and I got to know them better. I was
+"adopted" by the sweet grandmother of the house, and they treated me like I was part of the family.  
+I got along really well with their two sons, Vikas and Vishal. When I found out that Vikas is an official trekking guide, I
+immediately booked him, which proved to be one of the best decisions. They didn't ask me to do so,
+and most probably are not even aware that I wrote about their guest house here, but I felt compelled to mention this,
+as I see it as such a big part of my journey, having had the change to experience genuine Himalayan hospitality.
+
+### Trekking
+
+![Trekking](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/trek.jpg)
+
+I went on a few treks around the area, and the views are just breathtaking. Massive shoutout to my guide, Vikas, who
+took me off the beaten track to Triund. He arranged a tiny cabin room for me at the top, so I could enjoy the sunset
+and sunrise from there. If there's one thing you should do while in McLeod Ganj, it's definitely going to Triund. His
+friendly, yet introspective personality perfectly complements the calmness of the mountains. I totally recommend exploring
+the area with a local guide. It's a lot safer, hassle-free, you get to learn a lot more about the culture, and you're
+helping the local economy.
+
+![Triund](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/triund.jpg)
+
+In terms of other activities, Vikas took me to the Kangra Market, Galu Temple, Naddi Village and booked me a paragliding
+sessions at sunset, in Dharamshala.
+
+### Eating Out
+
+Although I don't consider myself a restaurant guru, I can tell you that the food in McLeod Ganj is quite good. Actually,
+there's several places geared more towards tourists, where you can find all sorts of cuisines. You'll definitely find
+something to your liking. I enjoyed [The Crossover Cafe](https://www.instagram.com/the_crossover_cafe/) for reading
+my book along with a cup of amazing hot chocolate. Also, if you're into amazing views, and have some extra time to walk
+around (or a taxi), I recommend going to [The Sunset Cafe](https://maps.app.goo.gl/XBGAzNN8QMSt4VoU8). Not only the view
+over the valley is awesome, but in terms of pizza, it's the best I've ever had in India. As close as it gets to a cozy
+european place.
+
+![Sunset Cafe](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/sunset-cafe.jpg)
+
+### Delhi
+
+While coming back to New Delhi, before leaving, I stayed at [Colonel's Retreat](https://www.colonelsretreat.com/).
+My favourite place to eat was [Aggarwal Restaurant](https://maps.app.goo.gl/PFGPGiryzgLG38rMA), located in Paharganj,
+within walking distance from the train station. I met with a couple of my friends and explored the city together.
+Uttam was so kind (and patient) to let me drive his car, an experience I will never forget. After a yoga class at the
+[Sivananda Yoga Vedanta Nataraja Centre](https://sivananda.org.in/delhi/), Krishna took me to the
+[ISKON Temple](https://www.iskcondelhi.com/), where we had a great time together. I also recommend checking out _Jama Masjid_,
+one of the largest mosques in India. I went there at prayer time during ramadan, and it's a sight to be seen.
+
+![Jama Masjid](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/jama-masjid.jpg)
+
+## Conclusion
+
+I feel very grateful for having had the opportunity to attend these courses. Not talking to anybody and observing silence
+for days on end felt weird at first, but I slowly got adjusted to it. However, I think the most interesting aspect was the no-phones
+policy. I didn't miss mine (except maybe the camera, for the first two days), but by the end I felt like I was seeing the
+world through different eyes. I was more present, more aware of my surroundings, and I was getting better rest.
+I remember the first time I got my phone back, it was of course flooded by emails and notifications. It took me about 1 hour
+to sort out through everything, after which I started to feel a weird burning sensation in my eyes and chest. I realized
+that it was being caused by the instant and continuous stimulus the phone was providing (messaging, web browsing, notifications, etc.).
+If there's one thing I'm sure of now, is that spending time on our phones can be very tiring and over-stimulating,
+often without us even realizing it. Tried and tested.
