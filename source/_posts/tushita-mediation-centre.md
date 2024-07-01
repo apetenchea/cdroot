@@ -249,7 +249,7 @@ of the form realm, there are the formless realms. Beings in this realm can live 
 of such a life span is incomprehensible.
 Regardless of how long these beings live, they are still subject to the law of impermanence, trapped in the cycle of
 birth and death. They still cannot transcend the boundaries of time and space.  
-However, OpenAI's DALL-E model does a pretty good job when it comes to this subject.
+However, OpenAI's DALL-E model does a pretty good job when it comes to illustrating this subject:
 
 ![Formless Realm](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/formless.jpg)
 
