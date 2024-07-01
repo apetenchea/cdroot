@@ -307,7 +307,7 @@ delicious home-cooked meals they served me. We had dinner together a few times, 
 I got along really well with their two sons, Vikas and Vishal. When I found out that Vikas is an official trekking guide, I
 immediately booked him, which proved to be one of the best decisions. They didn't ask me to do so,
 and most probably are not even aware that I wrote about their guest house here, but I felt compelled to mention this,
-as I see it as such a big part of my journey, having had the change to experience genuine Himalayan hospitality.
+as I see it as such a big part of my journey, having had the chance to experience genuine Himalayan hospitality.
 
 ### Trekking
 
