@@ -146,7 +146,7 @@ get back home, don't worry.
 
 If the weather permits, they'll take you on a little hike up to a stupa located outside the centre, on the road leading
 to Galu Temple (while maintaining the silence). The place if full of prayer flags, which are believed to spread positive
-energy as they flutter in the wind. Monks living in the area often spend several years n retreat, embracing a minimalist
+energy as they flutter in the wind. Monks living in the area often spend several years in retreat, embracing a minimalist
 lifestyle devoid of modern comforts like hot water or electricity.
 You can read more about the schedule on [tushita.info](https://tushita.info/programs/introduction-to-buddhism/typical-introduction-to-buddhism-course-schedule/).
 
@@ -239,11 +239,11 @@ a law of the universe, just like gravity.
 
 The concept of time and space was also discussed, although not in such great detail as I would have liked. In Buddhism,
 a very long unit of time is called a _kalpa_. The length of time represented by a kalpa is simply mind-bending. Imagine a huge
-container measuring 10 kilometers in each direction - that's basically a cube with the volume of 1000 m<sup>3</sup>.
+container measuring 10 kilometers in each direction - that's basically a cube with the volume of 1000 km<sup>3</sup>.
 Now, fill that container with fine mustard seeds, and take one seed out every 100 years. The time it would take to empty
 the container is the length of one minor kalpa. Human beings typically live for about 100 years; some insects are born
 at down and are dead by dusk. To such an insect, one day is the equivalent of one hundred years in human terms. Although
-there is a huge difference between one day and one hundred years, each existence spans a _lifetime_. According to Buddhism,
+there is a huge difference between one day and one hundred years, each existence spans _a lifetime_. According to Buddhism,
 there are beings with far longer life spans then human beings, stretching our imagination even further. Beyond the heavens
 of the form realm, there are the formless realms. Beings in this realm can live up to 80000 _major kalpas_. The duration
 of such a life span is incomprehensible (however, OpenAI's DALL-E model does a pretty cool job).
