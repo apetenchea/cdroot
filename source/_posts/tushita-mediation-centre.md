@@ -246,9 +246,10 @@ at down and are dead by dusk. To such an insect, one day is the equivalent of on
 there is a huge difference between one day and one hundred years, each existence spans _a lifetime_. According to Buddhism,
 there are beings with far longer life spans then human beings, stretching our imagination even further. Beyond the heavens
 of the form realm, there are the formless realms. Beings in this realm can live up to 80000 _major kalpas_. The duration
-of such a life span is incomprehensible (however, OpenAI's DALL-E model does a pretty cool job).
+of such a life span is incomprehensible.
 Regardless of how long these beings live, they are still subject to the law of impermanence, trapped in the cycle of
-birth and death. They still cannot transcend the boundaries of time and space.
+birth and death. They still cannot transcend the boundaries of time and space.  
+However, OpenAI's DALL-E model does a pretty good job when it comes to this subject.
 
 ![Formless Realm](https://raw.githubusercontent.com/apetenchea/cdroot/master/source/_posts/tushita-meditation-centre/media/formless.jpg)
 
