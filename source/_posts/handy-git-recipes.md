@@ -151,9 +151,11 @@ them into your local branch.
 
 If you want to fetch the changes without switching to that branch, you can run `git fetch <remote> <branch-name>:<branch-name>`. This 
 will bring the local representation of the remote branch into synchronization with the actual remote. Note that `git pull` is just a
-shorthand for a fetch followed by an additional merge step.
+shorthand for a fetch followed by an additional merge step.  
 When using fetch, one could, for example, create a new local copy of the remote branch by running `git fetch origin bug-fix/issue-18919:bug-fix/copy-of-issue-18919`.
-Simply running `git fetch` without any additional arguments will fetch all the changes from all the remote branches.
+Simply running `git fetch` without any additional arguments will fetch all the changes from all the remote branches. Adding
+`--prune` will also remove any remote tracking branches that no longer exist on the remote (stale branches that have probably
+been merged long ago and deleted): `git fetch --prune`.  
 If you're behind a slow network connection, this may take a while.  
 
 #### push
@@ -531,6 +533,31 @@ build artifacts that I want to ignore, but I don't want to add them to the `.git
 specific to my machine. I've added them to the `.git/info/exclude` file, inside hidden `.git` folder in my repository.
 This file is similar to `.gitignore`, but it's not versioned. This means that it's not shared with other developers,
 and it's not pushed to the remote repository.
+
+
+### Multiple configs
+
+Sometimes, you might want to use different email addresses for different projects. For example, use
+your personal email address for hobby projects, and your work email address for work projects. You can
+do this by setting the `user.email` and `user.name` at the repository level.
+
+```bash
+cd /path/to/personal/project
+git config user.email "my.email@example.com"
+git config user.name "John Doe" 
+
+cd /path/to/work/project
+git config user.email "work.email@example.com"
+git config user.name "John Doe"
+```
+
+You may also want to set global defaults for your user name and email address, which will be used for all repositories
+where you haven't set them explicitly. You can do this by running:
+
+```bash
+git config --global user.email "my.email@example.com"
+git config --global user.name "John Doe"
+```
 
 ## References
 
