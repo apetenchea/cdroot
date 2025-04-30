@@ -29,7 +29,7 @@ Dalai Lama's temple is close by in Dharamshala. Just near Tushita, there's a Goe
 be heard throughout McLeod Ganj. There are lots of shops and restaurants around, geared towards both Indian and foreign
 tourists. Most probably you'll find something to your liking.  
 The main gompa (meditation/lecture hall) can hold a bit over 100 people, and it's quite cozy. Their sound system is
-pretty good, and the acoustics are great. Apart from that, there's a libray and several other meditation places around the
+pretty good, and the acoustics are great. Apart from that, there's a library and several other meditation places around the
 centre.
 
 | Main Gompa                                                                                                                                  | Meditation Hall                                                                                                                           |
@@ -168,7 +168,7 @@ burning). They said the mind has no beginning, no end, and it does not originate
 consciousness comes from a former moment of consciousness, and the first moment of consciousness in this life comes
 from the last moment of consciousness from the past life. This is a very interesting concept, and we explored it in depth
 during the course. According to Buddhism, each of us have an individual stream of consciousness. There is not one source
-from which we emerge and then go bck to (such as Brahman in Hinduism).  
+from which we emerge and then go back to (such as Brahman in Hinduism).  
 
 We also talked a lot about the way we perceive reality, and how our mind creates our world. I wrote down one of my
 favorite quotes from the course:
