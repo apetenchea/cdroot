@@ -31,6 +31,8 @@ clang -o crash crash.c
 
 ## Linux
 
+### Howto
+
 This is the easiest one, but it depends on the distributions. For me, on Debian Sid, it was as easy as adding
 `ulimit -c unlimited` to my `.bashrc` file. This command allows core dumps to be generated without any size limit.  
 Apart from that, I could set the core dump pattern by modifying the `/usr/lib/sysctl.d/10-coredump-debian.conf` file
@@ -46,6 +48,12 @@ After running the executable, you can inspect the core dump with `gdb`:
 gdb <executable> /path/to/core.<PID>
 ```
 
+Or using `lldb`:
+
+```bash
+lldb <executable> -c /path/to/core.<PID>
+``` 
+
 If your distribution works differently, you can check where your system picks up the core dump pattern by running:
 
 ```bash
@@ -53,6 +61,12 @@ sudo sysctl --system
 ```
 
 In my case it was obvious because one of the lines printed was _* Applying /usr/lib/sysctl.d/10-coredump-debian.conf ..._.
+
+### Easy steps
+
+1. Set the core dump pattern in `/usr/lib/sysctl.d/10-coredump-debian.conf` to `kernel.core_pattern=/tmp/core.%p`.
+2. Set `ulimit -c unlimited` in your `.bashrc` file.
+3. Source your `.bashrc` file or restart your terminal.
 
 ## MacOS
 
