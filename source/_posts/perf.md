@@ -44,8 +44,8 @@ perf stat ls
 
 Let's take a real-world example: [bzip2](https://gitlab.com/bzip2/bzip2).
 
-It's pretty easy to build, however note that I'm not following the official instructions here, but I'm rather doing it
-just for the sake of demonstrating some key points in the profiling process.  
+It's pretty easy to build, however note that I'm not following the official instructions here. The purpose of this is
+rather demonstrating some key points in the profiling process.  
 Adding debug symbols always helps with the analysis, so I add `-g`. Whenever I profile my code, I always build it to be
 as close as it can get to the production version, and one of the most common flags used is `-O2`. Unless you have a very
 specific reason for it, please don't waste your time profiling unoptimized code. You don't want to work on a problem
