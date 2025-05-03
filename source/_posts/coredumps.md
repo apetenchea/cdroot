@@ -23,7 +23,7 @@ int main() {
 }
 ```
 
-Compile it with with `clang`, for example:
+Compile it with `clang`, for example:
 
 ```bash
 clang -o crash crash.c
@@ -31,7 +31,28 @@ clang -o crash crash.c
 
 ## Linux
 
-TODO
+This is the easiest one, but it depends on the distributions. For me, on Debian Sid, it was as easy as adding
+`ulimit -c unlimited` to my `.bashrc` file. This command allows core dumps to be generated without any size limit.  
+Apart from that, I could set the core dump pattern by modifying the `/usr/lib/sysctl.d/10-coredump-debian.conf` file
+to contain the following:
+
+```
+kernel.core_pattern=/tmp/core.%p
+kernel.core_uses_pid=1
+```
+After running the executable, you can inspect the core dump with `gdb`:
+
+```bash
+gdb <executable> /path/to/core.<PID>
+```
+
+If your distribution works differently, you can check where your system picks up the core dump pattern by running:
+
+```bash
+sudo sysctl --system
+```
+
+In my case it was obvious because one of the lines printed was _* Applying /usr/lib/sysctl.d/10-coredump-debian.conf ..._.
 
 ## MacOS
 
@@ -114,7 +135,7 @@ After that, running `./crash` will generate a core dump.
 To load the core dump, you can use `lldb`:
 
 ```bash
-lldb -c /path/to/core.<PID>
+lldb <executable> -c /path/to/core.<PID>
 ```
 
 Inspect the backtrace with `bt` or see the list of threads with `thread list`. You can also use `thread select <N>`
