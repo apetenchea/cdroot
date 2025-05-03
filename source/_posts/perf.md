@@ -12,7 +12,7 @@ a bit about how I use it.
 
 ## Installation
 
-I am on Debian Sid.
+Bear in mind that I am on a Debian Sid and you might need to adapt the installation steps for your distribution.
 
 ```bash
 sudo apt update
