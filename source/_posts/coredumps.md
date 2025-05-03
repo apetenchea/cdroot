@@ -150,3 +150,7 @@ considerably, so I disabled it.
 1. Enter mac recovery mode: hold power until prompted for options.
 2. From utilities choose the terminal.
 3. Disable system integrity protection: `csrutil disable`.
+
+## References and Further Reading
+
+- [How to Dump a Core File on MacOS (Monterey 12.5)](https://nasa.github.io/trick/howto_guides/How-to-dump-core-file-on-MacOS.html)
