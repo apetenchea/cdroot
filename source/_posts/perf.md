@@ -40,6 +40,16 @@ You can check whether `perf` works by simply checking it over the `ls` command:
 perf stat ls
 ```
 
+Normally you should be able to record profiling information as your own user, but if you get a permission error, you can
+try running it as root, or execute the following:
+
+```bash
+sudo chmod 755 /sys/kernel/debug/tracing
+sudo chown -R $USER:$USER /sys/kernel/debug/tracing
+```
+
+This won't last across reboots.
+
 ## Sample Program
 
 Let's take a real-world example: [bzip2](https://gitlab.com/bzip2/bzip2).
