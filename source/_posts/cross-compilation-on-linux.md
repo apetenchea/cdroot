@@ -101,6 +101,12 @@ clang++ \
 
 Don't get discouraged though, it's easy once you figure out how to do it once.
 
+### Using bootlin
+
+A large number of ready-to-use cross-compilation toolchains are available at [toolchains.bootlin.com](https://toolchains.bootlin.com/).
+These are very convenient to use, as they are precompiled and ready to go. You can download the toolchain for your architecture
+and unpack it (`tar -xvf *.tar.xz`). The toolchain will be in the `bin` directory of your unpacked folder.
+
 ### Build the toolchain from source
 
 Sometimes you're looking into a new and exotic architecture, when you realize that the toolchain is not readily available. You
