@@ -1,5 +1,5 @@
 ---
-title: Notes on building Clang
+title: notes on building clang
 date: 2019-01-30 20:25:10
 tags:
 - LLVM

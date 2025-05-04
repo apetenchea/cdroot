@@ -1,5 +1,5 @@
 ---
-title: Cross Compiling on Linux
+title: cross compiling on linux
 date: 2025-05-04 09:49:38
 tags:
 - Linux

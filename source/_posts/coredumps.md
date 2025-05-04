@@ -1,5 +1,5 @@
 ---
-title: Core Dumps
+title: core dumps
 date: 2025-05-03 12:36:35
 tags:
 - Programming
