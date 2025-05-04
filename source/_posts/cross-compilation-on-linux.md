@@ -134,7 +134,7 @@ Have fun using the `theadc` extension:
 
 ## Running programs for other architectures
 
-Sometimes you need to run (or debug) your cross-compiled code. This is easy, you can configure `multiarch/qemu-user-static`
+Sometimes you need to run (or debug) your cross-compiled code. This is easy, you can configure [qemu-user-static](https://github.com/multiarch/qemu-user-static)
 to run non-native Docker images.
 
 ```bash
