@@ -308,7 +308,7 @@ sudo mount --bind ~/src ~/windows/src
 Or you can make it persistent by adding the following line to your `/etc/fstab` file:
 
 ```
-/home/<user>/idasrc        /home/<user>/idasrc      none      bind      0      0
+/home/<user>/src        /home/<user>/windows/src      none      bind      0      0
 ```
 
 ## Conclusion
