@@ -179,9 +179,7 @@ Surprisingly convenient, it can mostly be done with from the **Registry Editor**
    - `1`: Mini dump
    - `2`: Full dump
 
-Here's a `reg` file that does all of this:
-
-{% ghcode https://github.com/apetenchea/cdroot/blob/master/source/_posts/coredumps/code/EnableDumps.reg %}
+Here's a [reg file](https://github.com/apetenchea/cdroot/blob/master/source/_posts/coredumps/code/EnableDumps.reg) that does all of this.
 
 A mini-dump contains thread call stacks, registers, module list, and optionally selected memory regions, while a full
 dump captures the entire process address space—every heap, buffer, and allocated block. Which one you choose depends on
