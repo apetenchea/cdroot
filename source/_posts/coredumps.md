@@ -165,6 +165,31 @@ considerably, so I disabled it.
 2. From utilities choose the terminal.
 3. Disable system integrity protection: `csrutil disable`.
 
+## Windows
+
+Surprisingly convenient, it can mostly be done with from the **Registry Editor**
+
+1. Open `regedit.exe`.
+2. Navigate to `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps`. If the key `LocalDumps` doesn't exist, create it.
+3. Set the `DumpFolder` value (type `REG_EXPAND_SZ`) to `%LOCALAPPDATA%\Temp`. This is the path where dumps will be written.
+  You may need to create this folder and grant permissions.
+4. Set the `DumpCount` value (type `DWORD`) to `10`. This is the maximum number of dumps that will be kept.
+5. Set the `DumpType` value (type `DWORD`) to `2`. This will create a mini dump. The options are:
+   - `0`: Custom dump (legacy)
+   - `1`: Mini dump
+   - `2`: Full dump
+
+A mini-dump contains thread call stacks, registers, module list, and optionally selected memory regions, while a full
+dump captures the entire process address space—every heap, buffer, and allocated block. Which one you choose depends on
+your use case, but I rarely experience crashes, so a full dump is "better safe than sorry" for me. Take it with a grain
+of salt, though, as full dumps can be quite large.
+
+From a developer console, I run `cl crash.c` to compile the `crash.exe` executable. Running it produces a 132K file
+`crash.exe.2092.dmp` in `%LOCALAPPDATA%\Temp`. You can open it with `WinDbgX.exe -z .\crash.exe.2092.dmp` and inspect
+the backtrace with `k` or `kP`.
+
 ## References and Further Reading
 
 - [How to Dump a Core File on MacOS (Monterey 12.5)](https://nasa.github.io/trick/howto_guides/How-to-dump-core-file-on-MacOS.html)
+- [Collecting User-Mode Dumps](https://learn.microsoft.com/en-us/windows/win32/wer/collecting-user-mode-dumps)
+- [User-mode dump files](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/user-mode-dump-files)
