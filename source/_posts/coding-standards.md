@@ -136,7 +136,7 @@ Following a coding guideline is a great thing to do, just don't go over the boar
 matter, thus perfection is not what you should strive for, but maintaining a good balance between productivity
 and beauty is what really counts. *Use auto-formatters whenever you can.* As a matter of fact, many projects are including them in their testing
 pipelines so that style is kept consistent in an automated manner. If you find yourself spending ridiculous amounts of time and
-energy over making code look pretty, there's a change you might be dealing with [OCD](https://en.wikipedia.org/wiki/Obsessive%E2%80%93compulsive_disorder).
+energy over making code look pretty, there's a chance you might be dealing with [OCD](https://en.wikipedia.org/wiki/Obsessive%E2%80%93compulsive_disorder).
 I know it can feel very frustrating, but don't worry, it is more common than you think. Try [CBT](https://en.wikipedia.org/wiki/Cognitive_behavioral_therapy),
 [meditation](https://tergar.org/meditation/) or a self help guide and try to let the auto-formatter do its work.  
 Being proud of your code is a great feeling indeed, but getting things done feels a lot better on the long run.
