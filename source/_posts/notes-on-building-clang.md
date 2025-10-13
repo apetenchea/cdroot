@@ -38,6 +38,8 @@ should work as well. The `-DLLVM_USE_LINKER=lld` flag can really speed up the bu
 of LLD installed on your system, but it is optional. The `-DLLVM_ENABLE_PROJECTS` flag is used to specify which projects
 you want to build. I'm only interested in Clang, LLD and LLDB. You may also add runtime libraries, such as OpenMP.
 
+If you want to build _everything_, add `-DLLVM_ENABLE_PROJECTS=all` and `-DLLVM_ENABLE_RUNTIMES=all`.
+
 ```bash
 cmake -S llvm -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DLLVM_USE_LINKER=lld -DLLVM_ENABLE_PROJECTS="clang;lld;lldb" -DLLVM_ENABLE_RUNTIMES="openmp"
 ```
